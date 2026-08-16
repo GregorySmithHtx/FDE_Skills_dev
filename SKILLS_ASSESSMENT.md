@@ -17,7 +17,7 @@ Fortune 500, DOD, and other orgs, often with global teams. Prior to that,
 front-end (JS) and Python/Django experience, now ~10 years stale.
 Currently exploring whether FDE is the right fit, not actively applying.
 
-## The 8 FDE competency pillars
+## The 9 FDE competency pillars
 
 | # | Pillar | Level | Evidence |
 |---|--------|-------|----------|
@@ -28,7 +28,20 @@ Currently exploring whether FDE is the right fit, not actively applying.
 | 5 | Data engineering & integration (ETL, APIs, messy real data) | **Partial** | Some exposure via Salesforce integrations; not deep pipeline/ETL/data-wrangling work |
 | 6 | Systems & architecture design for arbitrary domains | **Partial** | Architects within a bounded low-code platform; hasn't designed a system from a blank canvas recently |
 | 7 | Engineering rigor (git, testing, CI/CD, security-by-construction) | **Weak / unknown** | Low-code platforms absorb most of this; needs a direct check |
-| 8 | Modern AI/LLM application fluency | **Unknown / opportunity** | Not assessed yet — increasingly part of FDE work in 2026 (agents, RAG, tool use) |
+| 8 | Modern AI/LLM application fluency (building with LLMs — RAG, tool use, agents) | **Unknown / opportunity** | Not assessed yet |
+| 9 | AI-assisted engineering judgment — catching wrong AI output, architecture-under-uncertainty, tool/process skepticism | **Early / in active practice** | `symbol_constellation` project (see below) is generating real, non-hypothetical reps of this |
+
+### Why pillar 9 exists
+
+As of 2026, most literal code-writing on FDE-style work gets delegated to
+AI. That shifts where the actual skill lives: it's not "can you write the
+code," it's domain judgment — catching subtly-wrong AI output, making
+architecture calls under uncertainty, and closing the gap between what's
+asked for, what's meant, and what actually gets built. This is arguably
+becoming the *central* FDE skill, not a side one. It's distinct from pillar
+8 (building LLM-powered apps) — this is about working correctly alongside
+an AI collaborator on any codebase, which is now true of nearly all FDE
+work regardless of stack.
 
 ## What you already have (don't relearn this)
 
@@ -71,6 +84,16 @@ Currently exploring whether FDE is the right fit, not actively applying.
 - **Modern AI/LLM application building** — prompting, tool use/agents, RAG
   basics. Not traditionally "FDE," but increasingly load-bearing at the
   companies hiring for this role today.
+
+## Active practice: symbol_constellation
+
+A separate personal project (extracting/structuring data from historical
+texts into a graph database, with report UI and audit tooling) is
+currently the live vehicle for pillar 9 and parts of 5–7. Concrete, dated
+evidence from this project belongs in `PROGRESS_LOG.md` as it accumulates.
+First entry: 2026-08-16, see log for specifics (trust-calibration patterns
+with AI-generated code, git-discipline recovery across parallel sessions,
+triage discipline for deferred work).
 
 ## Bottom line
 
