@@ -38,9 +38,11 @@ judgment):
   stays gitignored — real data safety is a separate encrypted-snapshot
   script).
 
-Open item, not yet resolved: what `FDE_Skills_dev` itself should be
-(skill library, portfolio piece, or something else) — picking this back up
-directly in this session.
+**Resolved (same session):** `FDE_Skills_dev` is a private working log
+first — raw, for internal use. Once real evidence accumulates (not day
+one), a separate public-facing summary gets distilled from it for
+applications; this repo stays private and unpolished by design. Reflected
+in `CLAUDE.md` and `README.md`.
 
 ### 2026-08-16 — Assessment created
 

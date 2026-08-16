@@ -11,6 +11,10 @@ generic checklist.
 - **`PROGRESS_LOG.md`** — dated notes on what actually happened.
 
 This repo is meant to be updated as you go, not written once and forgotten.
+It's a **private working log first** — raw, for you. Once there's real
+accumulated evidence (not day one), a separate public-facing summary can be
+distilled from it for FDE applications; this repo itself stays private and
+unpolished by design.
 
 ## Keeping this connected to your other Claude Code projects
 

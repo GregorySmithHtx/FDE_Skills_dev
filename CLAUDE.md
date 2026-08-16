@@ -15,6 +15,16 @@ he done about it.
   Add an entry whenever a session here (or referenced from another project)
   produces a real update, newest first.
 
+## Repo shape (decided 2026-08-16)
+
+This repo is a **private working log first**. It stays raw and private —
+not written for an outside reader. If/when there's enough real evidence
+accumulated to be worth showing a hiring manager, a *separate* polished,
+public-facing artifact gets distilled from it — don't retrofit this repo's
+own files to be portfolio-facing, and don't start that public piece before
+there's real evidence to draw from (a handful of dated log entries showing
+actual pillar movement, not day-one content).
+
 ## Working here
 
 - Keep updates grounded in evidence — a claimed skill needs something built
