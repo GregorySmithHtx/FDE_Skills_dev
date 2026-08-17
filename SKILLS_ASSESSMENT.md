@@ -1,6 +1,6 @@
 # FDE Skills Assessment — Greg Smith
 
-Last updated: 2026-08-16
+Last updated: 2026-08-17
 
 ## Context
 
@@ -24,9 +24,9 @@ Currently exploring whether FDE is the right fit, not actively applying.
 | 1 | Client engagement & requirements discovery | **Strong** | 10 years doing this professionally, at the project-lead level |
 | 2 | Ownership & navigating ambiguity to production | **Strong** | Ships production systems, not demos, for Fortune 500/DOD |
 | 3 | Enterprise domain & data literacy | **Strong** | Deep Salesforce data-model fluency; exposure to DOD/enterprise compliance constraints |
-| 4 | Full-stack software engineering (hand-written, no low-code scaffold) | **Weak / rusty** | JS + Python/Django are ~10 years stale; day-to-day work is low-code, so coding reps are low |
+| 4 | Full-stack software engineering (hand-written, no low-code scaffold) | **Weak / rusty** | JS + Python/Django are ~10 years stale; day-to-day work is low-code, so coding reps are low. Calibrated 2026-08-17: can read/understand and adapt existing code, but hasn't written from scratch in ~10 years and reports real blank-page paralysis without a template — coaching should start from a working example to modify, not a blank editor. First guided rep completed same day: extended `paren_triage.py`'s CLI (a `--source` filter) from the existing `--bucket` pattern as a template — confirms the template-based approach works, and included a real debugging-loop improvement mid-session (chose to run the code and read the traceback rather than request another hint) |
 | 5 | Data engineering & integration (ETL, APIs, messy real data) | **Partial** | Some exposure via Salesforce integrations; not deep pipeline/ETL/data-wrangling work |
-| 6 | Systems & architecture design for arbitrary domains | **Partial** | Architects within a bounded low-code platform; hasn't designed a system from a blank canvas recently |
+| 6 | Systems & architecture design for arbitrary domains | **Partial** | Architects within a bounded low-code platform; hasn't designed a system from a blank canvas recently. 2026-08-17: real unprompted catch on symbol_constellation — flagged that a proposed typed schema table would regress a core multi-source design principle, and proposed the fix (model "deck" as a first-class object with an ordered FK sequence rather than a column). One data point, not yet "Strong," but genuine architecture-judgment evidence, not hypothetical |
 | 7 | Engineering rigor (git, testing, CI/CD, security-by-construction) | **Weak / unknown** | Low-code platforms absorb most of this; needs a direct check |
 | 8 | Modern AI/LLM application fluency (building with LLMs — RAG, tool use, agents) | **Unknown / opportunity** | Not assessed yet |
 | 9 | AI-assisted engineering judgment — catching wrong AI output, architecture-under-uncertainty, tool/process skepticism | **Early / in active practice** | `symbol_constellation` project (see below) is generating real, non-hypothetical reps of this |
