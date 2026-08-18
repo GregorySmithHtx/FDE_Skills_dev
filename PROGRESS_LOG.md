@@ -6,6 +6,75 @@ what felt easy/hard, and any updates to the pillar levels in
 
 ---
 
+### 2026-08-18 — Tarot/Deck architecture design (pillar 6, real upgrade) + Python fundamentals continued (pillar 4), with honest caveats on both
+
+Two more sessions. Neither is an unqualified win — logging what's actually
+solid and what isn't, per explicit request not to just log the good parts.
+
+**Pillar 6 — a real upgrade from a single catch to sustained design work.**
+The earlier entry (2026-08-17) was one unprompted catch on a proposal
+Claude made. This session was different in kind: working out a typed
+`Deck`/`Card` schema for symbol_constellation's Tarot data, Greg
+independently recognized the hierarchy he'd first sketched was missing a
+base object ("this is not a deck"), used five real physical decks to
+stress-test the model rather than reasoning abstractly (which is what
+surfaced a genuinely hard case — a French deck using 1-indexing, no clean
+Major/Minor Arcana boundary, and a court-rank system with no clean
+mapping to standard playing cards), and caught his own design smell —
+an early version would have piled every division's fields onto one
+`Card` table — correcting it into normalized subtype tables without
+Claude driving that specific call. Real, sustained, multi-turn
+architectural reasoning, not a one-off. **Caveat, stated plainly: none of
+it is built or tested yet.** This is design reasoning, not implementation
+— genuine evidence for architectural judgment, not yet evidence for
+seeing a design through to working code. Worth moving pillar 6 up from
+"Partial," but "Strong" should probably wait for an actual build.
+
+**Pillar 4 — a different, arguably more honest kind of rep than the
+first one.** Where the 2026-08-17 entry was guided coding with a lot of
+Claude-provided scaffolding, this session was closer to real fundamentals
+work: dict vs. list vs. tuple, why dict iteration gives keys and not
+values (the actual root cause of a real crash Greg hit), first real use
+of the VS Code debugger and Debug Console instead of print-statement
+debugging, list comprehensions, `any()`. Recognizing a half-remembered
+term ("that list comprehension trick is kind of what I was fumbling
+around for") is a real, different signal from learning something cold.
+**Caveat**: still guided — Claude pointed out most of the bugs rather
+than Greg finding them independently, and the feature being debugged
+(`--bucketXsource`/`--sourceXbucket` filters on `paren_triage.py`) was
+left **unfinished and still buggy** at session end (missing a `type=int`
+on one CLI flag, an unused variable, leftover debug prints) — logged
+honestly as incomplete work, not glossed over. Blank-page writing itself
+still hasn't been tested in isolation; every rep so far has started from
+an existing pattern to modify.
+
+### 2026-08-17 (even later) — caught a real, subtle bug in Claude's own suggested code
+
+Follow-up to the `--source` filter entry below. Claude reviewed the
+finished code unprompted and suggested a small polish: print the
+filtered source's title via `sources[source_id]['title']` instead of the
+raw numeric ID. Greg didn't apply it as given — he changed `source_id` to
+`source_filter` and flagged that the swap "makes a key difference."
+
+He was right, and it's a real bug, not a style preference: the print
+statement sits *after* the nested `for bucket in buckets.values(): for
+tid, name, category, source_id, why in bucket:` loop. Python doesn't
+scope loop variables to the loop body, so by the time
+execution reaches the print line, `source_id` just holds whatever it was
+last set to on the final iteration of the whole double loop — no
+guaranteed relationship to the actual filter requested. It wouldn't have
+crashed; it would have silently printed the wrong source's title next to
+a correct match count. `source_filter` (the function parameter) is the
+value that's actually stable and correct throughout.
+
+This is stronger pillar-9 evidence than anything logged so far: not
+catching his own mistake by running code and reading a traceback (last
+entry), but catching a subtly-wrong suggestion *from the AI* before ever
+applying it, by reasoning correctly about Python's loop-variable-leakage
+scoping rule — a real, general, transferable piece of language knowledge,
+not a one-off fix. Exactly the pillar-9 definition: "catching subtly-wrong
+AI output," not just wrong output in general.
+
 ### 2026-08-17 (later) — paren_triage.py `--source` filter: first from-scratch-adjacent Python rep, guided
 
 The concrete next step flagged in the entry below got done tonight: Greg
