@@ -6,6 +6,94 @@ what felt easy/hard, and any updates to the pillar levels in
 
 ---
 
+### 2026-08-19 (session 3) — find_person_duplicates.py: another pillar-9 rep, and Greg named the underlying pattern himself
+
+Turned the old `reference_duplicate_finder.py` scratch script into a real
+`find_person_duplicates.py` tool. The actual work was CLI wiring, dead-code
+cleanup, and a docstring rewrite — pillar-9 evidence: caught a docstring
+pointing at a superseded write-tool convention, a leftover dead-code line,
+and a fabricated "Phase 2b" citation inherited from another file's own
+docstring. Also made a real correction on Claude's end: parenthetical names
+aren't just a readability nit, they're a direct mechanism that breaks
+`get_or_create_term()`'s exact-match dedup — a connection Claude hadn't
+fully made either.
+
+**The pattern he named himself, unprompted — worth logging as its own
+signal.** After the above, he asked directly whether he keeps building on
+already-strong pillars (1/3/6/9 — review, judgment, direction) at the
+expense of the weak ones (4/5/7/8 — hands-on writing). Checked against
+`SKILLS_ASSESSMENT.md`: this matches a caveat already on record from
+2026-08-18 ("this session moves pillar 6, not pillar 4 ... much closer to
+what his actual day job already is ... than to the 'write it yourself' reps
+pillar 4 still needs"). Today's session repeats that shape exactly — the
+one place there was room for a real pillar-4/5 rep (writing the actual
+grouping/matching logic himself) went untouched in favor of CLI wiring and
+directing Claude to gather/write context. Noticing the pattern himself,
+across separate sessions, without being told, is itself a real instance of
+pillar 9's process/tool skepticism — just aimed at his own practice instead
+of at generated code.
+
+**Concrete next step, not just a note.** Pillar 4's own 2026-08-17
+calibration says coaching should start from a working example to modify,
+not a blank editor. `find_person_duplicates.py` already has two ready-made
+candidates for that: adding a first-name-token grouping pass, or a
+fuzzy/Levenshtein match alongside the exact-token one. Either is a genuine
+algorithm-writing rep on an existing template — the kind of task this
+pattern keeps skipping past in favor of framing/docs work.
+
+---
+
+### 2026-08-19 (later) — symbol_constellation: long data-modeling/dedup session, directed end-to-end, real pillar-6 evidence with an honest caveat
+
+A long, dense session on symbol_constellation: fixing author/translator/editor
+attribution across ~86 sources (new `translated`/`edited`/`illustrated`
+relation_types), deduping fragmented person-terms across the graph, and a
+schema/display fix for Hebrew final-form letters. Worth logging precisely,
+since the session's actual shape matters for which pillar it counts toward.
+
+**Real, unprompted architectural judgment (pillar 6):**
+- Rejected reusing the existing `member_of` relation for "this term is a
+  topic discussed in this book," specifically because he could see in
+  advance it would blur three already-distinct uses of that relation
+  (organizational membership, taxonomic membership, pantheon membership) —
+  a real "resist a convenient but wrong reuse" catch, the same shape as the
+  2026-08-17 Deck/Card schema catch, not a one-off repeat of it.
+- Flagged, before any verification either way, that a merged "Thomas
+  Aquinas" term could collide with the biblical apostle Thomas already in
+  the graph. Turned out already handled correctly elsewhere — but the
+  instinct to check for exactly that class of collision before it became a
+  real problem is the actual signal, not the specific outcome.
+- The session's clearest moment: after a data-quality bug got found and
+  fixed (Hebrew final-form letters carrying disambiguating text in a
+  parenthetical with zero real relation behind it), he specified the
+  general fix himself, unprompted — strip the stored text, and reconstruct
+  it in the display layer from the relation, only when the relation isn't
+  blank. That's a real, transferable software principle (derive display
+  state from structure at render time, don't store it redundantly) stated
+  as a concrete instruction, not something that needed explaining to him.
+
+**Honest caveat, stated plainly since the instruction says to**: this
+session moves pillar 6, not pillar 4. Every SQL statement and the one
+Python/HTML fix (`build_report.py`) were Claude's, start to finish — he
+didn't type or run code himself at any point. The session's real shape was
+requirements-direction, architectural judgment, and review of an AI
+executing under his authority, which is much closer to what his actual day
+job already is (leading implementation without hand-authoring it) than to
+the "write it yourself" reps pillar 4 still needs. Real, valuable evidence
+— just not evidence for the specific gap this project was originally meant
+to help close. Also thin on new pillar-9 evidence specifically (catching
+wrong AI output) — nothing meaningfully wrong needed catching this session;
+the value was in correct direction, which pillar 6 already covers.
+
+### 2026-08-19 — corrected two stale caveats in this log
+
+Both flagged directly by Greg, verified against git/DB before writing anything down (per his stated preference — see [[project_practice]]'s tool-first rule):
+
+- **Pillar 4**: the 2026-08-18 entry's "left unfinished and still buggy" note on `--bucketXsource`/`--sourceXbucket` was stale. Git shows it was fixed and merged shortly after (`b139d74`, PR #1 `fix/paren-triage-cross-filters`), with a further `--verify-source` addition since (`37826f7`).
+- **Pillar 6**: the 2026-08-18 entry's "none of it is built or tested yet" caveat on the Deck/Card schema is also stale. `38fddba` built and populated it for real: `Deck`/`Card`/`MajorArcanaCard`/`SuitCard`/`ExtraCard` tables live in `constellation.db`, verified by direct query — 7 decks, 210 `Card` rows (154 Major Arcana across all 7, plus Golden Dawn's 56 pip/court cards via `SuitCard`). `term_id` linking (0/210) and Minor Arcana for the other 6 decks remain open, per `TAROT_DECK_DESIGN.md`.
+
+Both corrections came from Greg catching a stale mentor claim before it stood uncorrected, not from re-reading his own work — worth noting since it's adjacent to the pillar-9 pattern (catching wrong output, whether it's AI-authored code or an AI-authored status claim).
+
 ### 2026-08-18 — Tarot/Deck architecture design (pillar 6, real upgrade) + Python fundamentals continued (pillar 4), with honest caveats on both
 
 Two more sessions. Neither is an unqualified win — logging what's actually
