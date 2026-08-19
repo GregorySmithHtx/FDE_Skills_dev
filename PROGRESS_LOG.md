@@ -80,6 +80,20 @@ across separate sessions, without being told, is itself a real instance of
 pillar 9's process/tool skepticism — just aimed at his own practice instead
 of at generated code.
 
+**Correction, added after the fact (2026-08-19): the pillar-4 gap noted
+above did NOT stay untouched.** Later in this same continued session, Greg
+wrote the `--first` flag himself: extended `find_surname_groups` into
+`find_name_groups` with a shared `position_flag` parameter (his own design
+call on how to reuse the fetch/tokenize/group-filter logic across both
+directions rather than duplicating it), wired the `argparse` flag, and
+self-corrected two real bugs across three review passes with hints only,
+no code from me -- a stray `from torch import full` (IDE-autocomplete
+artifact, not his to begin with, but his to clean up) and converting a
+`nargs="?", const="first"` flag to the more correct `action="store_true"`.
+Verified by actually running the script in both modes against the live DB.
+This is real, hands-on pillar-4 evidence -- see `SKILLS_ASSESSMENT.md`,
+third dated rep added to that row.
+
 **Concrete next step, not just a note.** Pillar 4's own 2026-08-17
 calibration says coaching should start from a working example to modify,
 not a blank editor. `find_person_duplicates.py` already has two ready-made
