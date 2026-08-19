@@ -6,6 +6,53 @@ what felt easy/hard, and any updates to the pillar levels in
 
 ---
 
+### 2026-08-19 (session 4) — same-session continuation: real duplicate-review + data-quality work, directed end-to-end, honest pillar-6-not-4 caveat
+
+Immediately after session 3's CLI rep, the conversation continued into using
+`find_person_duplicates.py` for its actual purpose: reviewing real candidate
+pairs from the live graph. Substantial, real work came out of it, but it's
+worth logging precisely for the same reason as the 2026-08-19 "(later)"
+entry below -- the session's shape determines which pillar it counts for.
+
+**What happened:** merged four confirmed duplicate/near-duplicate person
+terms (Serenus Samonicus/Sammonicus, Octavius/Octavius Augustus, William of
+Paris's unnamed anecdote-woman folded back into William of Paris, a
+Herodotus fragment folded into the main Herodotus term), each requiring a
+real conflict check against `term_relations`' UNIQUE constraint before
+remapping. Separately, caught and fixed a systemic data-quality pattern:
+93 `represents` relations were being used as a generic connector outside
+its documented "genuine symbolic meaning" scope (traceable to old
+orphan-remediation-pass work), and 2706 term definitions carried a
+redundant "per this source" hedge traced to the local Ollama drafting
+prompt's phrasing, which got fixed at the source.
+
+**Real, unprompted judgment calls (pillar 6), several sharper than what I
+generated first:**
+- Corrected my own initial framing that `represents` should be tarot-only
+  scoped ("shouldn't be only for tarot, but for any instance of symbolic
+  meaning") -- a real catch of an AI-drawn boundary that was too narrow,
+  not just too loose.
+- Articulated a crisp three-way boundary between `represents` (symbolic
+  meaning), `discusses` (an actual discussion/citing), and `associated_with`
+  (deliberately loose, no dedicated type yet) that I hadn't drawn that
+  cleanly myself.
+- Independently noticed the "per this source" cliché as noise across many
+  terms -- an editorial/data-quality catch nobody had flagged before,
+  traced to root cause (the Ollama prompt) rather than just patched at the
+  DB level.
+- Made real merge-direction calls (which spelling/name survives, which
+  becomes an alias) and flagged a likely factual mix-up in a source
+  definition (Loudun vs. the Girard/Cadière affair, two different
+  centuries) without being asked to.
+
+**Honest caveat, same shape as the "(later)" entry below:** every SQL
+statement, every conflict check, every write was Claude's, start to finish.
+This is pillar 6 (and touches pillar 9, correcting AI framing), not pillar
+4 -- the session's real shape was direction and review of an AI executing
+under his authority. Consistent with the pattern he named himself in
+session 3: real, valuable evidence, just not the "write it yourself" reps
+pillar 4 still needs.
+
 ### 2026-08-19 (session 3) — find_person_duplicates.py: another pillar-9 rep, and Greg named the underlying pattern himself
 
 Turned the old `reference_duplicate_finder.py` scratch script into a real
