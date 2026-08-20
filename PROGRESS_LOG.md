@@ -6,6 +6,66 @@ what felt easy/hard, and any updates to the pillar levels in
 
 ---
 
+### 2026-08-19 (session 5) — symbol_constellation paren-cleanup mega-session: another self-written tool, the sharpest pillar-9 catch yet, and real pillar-6 pipeline-architecture judgment
+
+A long, dense session pushing the parenthetical-name backlog from 760 down
+to 442 terms (`paren_triage.py`), with a lot of real ground covered. Logging
+precisely, same discipline as every other entry here.
+
+**Pillar 4/5 — another tool written himself, `find_existing_term_in_parens.py`.**
+Same coding-challenge pattern as `find_own_category_in_parens.py` and
+`find_person_duplicates.py`: built a script that finds terms whose
+parenthetical content matches an existing term's name, surfacing "210 easy
+remaps." Caveat on this one specifically: unlike the earlier two tools, I
+didn't see the build/debug process — he opened it already substantially
+complete and reported the result ("I have another one that has 210 easy
+remaps"). Real evidence he's now doing this kind of tool-writing as a matter
+of course rather than needing it framed as an exercise, but a thinner
+observation than the fully-witnessed `find_person_duplicates.py` reps.
+
+**Pillar 9 — the sharpest catch logged yet, and a new kind of catch.**
+Every prior pillar-9 entry is about catching wrong *code*. This one is about
+catching wrong *trust in a verification tool*: `paren_triage.py`'s own
+`collision_ok` bucket had labeled 34+ term pairs "no action needed," and
+several turned out to be real duplicate-fork bugs (same King Ahab, same
+King David, same prophet Isaiah, each accidentally split into two rows)
+that the bucket's heuristic couldn't actually distinguish from genuine
+name collisions. His correction, verbatim: *"I am the tool... if there are
+rules that get in the way of progress, we can't program around them and
+end up in this kind of situation again... I don't get to be clever and you
+don't get to be clever either, no hiding the clothes under the bed instead
+of cleaning our room."* That's a durable, transferable principle stated
+precisely — a tool's "ok" label is an approximation, not a verified answer,
+and treating it as final is how real problems hide behind a clean-looking
+report. This is pillar 9's definition exactly (tool/process skepticism),
+one level more sophisticated than catching a bug in a single suggestion.
+
+**Pillar 6 — real architecture judgment, a new facet (pipeline/process, not
+data-schema this time).** Floated a staged-promotion ingestion pipeline for
+future source extraction (motivated by a possible future Torah/Old
+Testament source, whose density would stress-test exactly tonight's
+failure modes), illustrated with a full enterprise-style multi-environment
+release pipeline as a (his own words, after the fact) hyperbolic comparison
+point. When I pushed back that the full version is more ceremony than a
+two-person project needs, he agreed immediately and reframed it correctly
+himself: "worst case," contingent on whether other people ever chip in, and
+for now "minimal, near best, with expected hiccoughs." That's the right
+instinct — scope infrastructure to actual team size and risk, not to what a
+textbook enterprise pipeline looks like, and recognize your own
+illustrative exaggeration as exaggeration rather than let it calcify into
+the plan. Adds breadth to the already-"Strong" pillar 6 rating
+(process/pipeline architecture, distinct from the Deck/Card data-schema
+evidence already logged) rather than being new evidence on its own.
+
+**Honest caveat, same shape as every prior entry of this kind:** the actual
+execution — many hundreds of SQL writes across merges, relation additions,
+and renames — was Claude's, start to finish, under his direction and
+correction (he caught a batch of newly-introduced name collisions I'd
+missed, and flagged a specific bad match — term 735 — that I'd have
+otherwise auto-processed incorrectly). Real pillar 6/9 evidence; not new
+pillar 4 hands-on-coding evidence beyond the `find_existing_term_in_parens.py`
+note above.
+
 ### 2026-08-19 (session 4) — same-session continuation: real duplicate-review + data-quality work, directed end-to-end, honest pillar-6-not-4 caveat
 
 Immediately after session 3's CLI rep, the conversation continued into using
