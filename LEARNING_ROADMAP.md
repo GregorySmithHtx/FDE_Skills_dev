@@ -9,8 +9,8 @@ actually did and learned, not just checkbox status.
 
 Goal: get the rust off before building anything real.
 
-- [ ] Git: branching, rebase vs. merge, resolving a real conflict, PR workflow
-- [ ] Command line fluency: shell basics, piping, editing files without an IDE
+- [x] Git: branching, rebase vs. merge, resolving a real conflict, PR workflow
+- [x] Command line fluency: shell basics, piping, editing files without an IDE
 - [ ] Modern JS/TypeScript: `let`/`const`, arrow functions, destructuring,
       promises/async-await, modules, then TypeScript's type system
 - [ ] Python refresh: virtual envs (`uv` or `venv`), type hints, f-strings,

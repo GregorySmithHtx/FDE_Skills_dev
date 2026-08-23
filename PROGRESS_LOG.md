@@ -6,6 +6,212 @@ what felt easy/hard, and any updates to the pillar levels in
 
 ---
 
+### 2026-08-23 (session 9) — SQL box continued (Postgres, real bugs caught), plus the sharpest pillar-9 rep yet on symbol_constellation
+
+**Mentoring track: Postgres set up, SQL box actively worked, two real bugs
+self-caught.** No Postgres locally before this session -- installed it,
+created a practice DB, loaded real symbol_constellation data as fixtures
+(which itself surfaced two genuine data-integrity gaps in the live project,
+not staged for the exercise: 35 real duplicate `terms` rows, several
+dangling foreign-key references -- both left visible via Postgres `NOT
+VALID` constraints rather than hidden). First exercise handed over
+combined join + two aggregates + `HAVING` all at once; self-identified this
+as too much at once ("you picked all of the things I said I need a
+refresher on in a single step") -- rebuilt as single-concept steps
+(aggregate alone -> join alone -> join+aggregate -> `OR`-across-two-columns
+-> disambiguating two same-named "Saturn" terms by category). Caught,
+independently, before being told: (1) `AND`/`OR` mixed without parens
+silently returning wrong rows (a classic, dangerous-because-quiet bug --
+proved empirically by rerunning and seeing Hercules/Jupiter/Apollo show up
+in a query that should've been Saturn-only), (2) `table.count(*)` -- tried
+to put a table prefix on an aggregate function call, correctly diagnosed
+once shown it parses as a schema-qualified function reference, not a
+column. `LEARNING_ROADMAP.md` SQL box still not fully checked -- HAVING/
+subqueries not reached this session, real joins+aggregates now are.
+
+**symbol_constellation, unprompted: sharpest pillar-9 rep on record, one
+level more abstract than anything logged so far.** Not catching a single
+wrong AI suggestion or a single tool's blind spot (both already logged) --
+this time, diagnosing a *systemic* failure mode of AI-assisted work itself.
+Trigger: a parallel session had let 1,556 of 2,586 drafted terms violate a
+rule that was fully documented in Claude's own memory system. Greg's own
+framing, unprompted: "I do think we need to build out the Synthecist...
+what I'd really like [is] to deploy the agents that have very specific
+tasks and don't need to be caught up from memory on what they do and how."
+That's a correct, non-obvious diagnosis of *why* memory-based governance
+fails at scale (a general session's context-recall is probabilistic per
+decision, not a hard constraint; a narrow agent's fixed system prompt is
+loaded in full every time, no recall required) -- arrived at independently,
+before Claude had framed it that way. Followed by real architecture
+judgment: proposing a two-tier discovery/dispatch (a periodic "spider"
+agent that finds problems and delegates) + narrow single-purpose worker
+design, then correctly weighing (when asked) whether to split "term-
+breaking" and "chain-building" into two agents or one with two tasks --
+landed on accepting the one-agent-two-tasks argument once shown it matches
+an already-working precedent (the Researcher agent) rather than defending
+the original two-agent instinct for its own sake. This is pillar 9 exactly
+as the assessment defines it ("architecture calls under uncertainty,"
+"tool/process skepticism") but at the level of *how AI agents themselves
+should be structured and governed*, not just judging one AI output. Worth
+citing as the concrete example if pillar 9 comes up in an interview --
+stronger than the prior two entries, not just another instance of the same
+thing.
+
+**Caveat, honestly logged**: the actual POC build (a new `synthesist` agent
+definition, a schema migration, a real decomposition run against live data)
+was Claude's implementation work, directed by Greg -- strong pillar 6
+(architecture) and pillar 9 evidence, not new pillar-4 hands-on-coding
+evidence. Consistent with the standing note on pillar 6: he directs and
+reviews this class of work at a high level, doesn't yet hand-write it
+himself. That gap is unchanged by today.
+
+---
+
+### 2026-08-21 (session 8) — first dedicated Roadmap/Mentoring-track session: Git fluency box checked for real
+
+First session run under the new two-track split (Project vs. Mentoring,
+chosen via a SessionStart hook set up earlier the same day) that actually
+worked a `LEARNING_ROADMAP.md` Phase 0 item directly, rather than picking
+up incidental reps from `symbol_constellation` work. Coaching model held:
+Claude built the practice fixtures and reviewed, Greg ran every git
+command himself.
+
+**Branching + merge conflict.** Built a throwaway sandbox repo
+(`~/experiments/git-fluency-practice`) with two branches deliberately
+diverged on the same YAML field. First conflict (`timeout_seconds`,
+master vs. `feature/raise-timeout`): resolved correctly and for the right
+reason — kept the branch whose commit message actually stated a rationale
+("handle slow upstream calls") over the one that didn't ("bump timeout
+slightly"). Also self-caught an empty-commit-message block on the first
+attempt and understood why it happened (`git commit` with no `-m` opens
+an editor; empty message aborts on purpose).
+
+**Rebase vs. merge, and the "ours/theirs" trap.** Second divergence
+(`max_connections`, `trunk` vs. `feature/pool-tuning`) via
+`git rebase trunk`. Genuinely useful confusion mid-exercise: believed
+staying checked out on `feature/pool-tuning` meant that branch's values
+would win, which is backwards during a rebase (the branch named as the
+rebase target is "ours"; your own branch's commit is "theirs," replayed
+on top). The conflict resolution actually landed on trunk's value by
+accident first (editor/VS Code silently picked "theirs" before he'd
+looked), caught on review, fixed via `git commit --amend` rather than
+redoing the rebase — correct instinct, no unnecessary history rewrites.
+Iterated the amended commit message twice more: once to describe both
+changed fields instead of just one, once to fix an actual factual error
+(message said "550" when the file said "250" — caught immediately, not
+just a style nit).
+
+**Real PR workflow against `symbol_constellation`.** Rather than fake
+this in the sandbox, used genuinely completed same-day project work
+(the `close-session` skill, `start_queue.sh`, archived finder scripts,
+today's log entry) as real PR material — correctly excluded two
+unrelated junk files (`constellation.db.bak-*`, `.sqbpro`) from the
+commit without being told which ones. Branch created, committed, pushed,
+PR opened (`GregorySmithHtx/symbol-constellation#5`) — first pass had an
+empty PR body, caught and fixed unprompted-content-wise (body now
+explains the *why* for all four pieces of the change, not just the diff).
+
+**Pillar 4 update-worthy**: this is the first roadmap evidence that isn't
+filtered through symbol_constellation's own problem shape — a genuine,
+scoped git-fluency rep, self-directed within the exercise (VS Code
+terminal pager confusion self-resolved after one hint, branch-naming
+research self-directed via `git log --merges` after being told where to
+look, not handed the answer).
+
+**Same session, second box: Command line / piping.** Short (~15-message)
+exercise, real data (`batch_run.log`), no fixture repo needed. Built a
+3-stage pipeline (`grep -oE` extraction, `sort -u` dedup, `wc -l` count)
+from scratch, asked for regex background honestly rather than faking
+familiarity ("I'm not conversant in regex, that's why I asked about
+wildcards" -- good self-awareness, not a gap to paper over), then caught
+a real gotcha unprompted: `sort`'s default lexicographic-not-numeric
+ordering, and independently reasoned out afterward that it was moot once
+piped into `wc -l` (order is invisible to a line-count) without being
+told. Final answer: 27 distinct jobs processed. **Greg flagged this
+specific thread as worth expanding scope on** -- piping/shell fluency is
+landing as more immediately useful than expected; worth treating as its
+own deeper block next time rather than the few-minutes version, not just
+ticking the roadmap checkbox and moving on.
+
+**Third box, Command line "editing without an IDE": real nano reps** --
+search/cut/paste/insert/save-and-exit, all landed correctly. Also
+diagnosed a genuine environment bug along the way (VS Code eating
+`Ctrl+K` as a chord-prefix before it reached the terminal) rather than
+assuming nano itself was broken -- isolated it correctly via nano's own
+`Ctrl+G` help screen before escalating.
+
+**Fourth box, SQL indexes -- and a sharp pillar-9 catch mid-exercise.**
+Built a real `SCAN`→`SEARCH USING INDEX` before/after on `evidence.term_id`
+(6766 rows, previously unindexed). When told the column was safe to index
+because it was "insert-only" (verified by grep of committed .py files),
+**Greg pushed back on the spot**: "we combined many terms, the term_id
+should have been updated?" -- correctly reasoning from what he already
+knew about this project's merge workflow, not from the SQL itself. That
+catch was right: the grep-based claim was true but incomplete (merges in
+this project are explicitly done by hand, never scripted, so a real
+merge's `UPDATE evidence` would never appear in any committed file).
+Checking the live DB instead of the code surfaced **29 real orphaned
+`evidence.term_id` rows** — a genuine, previously-unknown data-integrity
+gap, not a hypothetical, now logged in
+`project_schema_remediation_plan.md` for later triage. This is Pillar 9
+exactly as defined: not catching a wrong line of code, but catching that
+a *verification method itself* (grep-the-code) couldn't see a whole
+category of real-world change (hand-run DB commands) — same shape as the
+2026-08-19 `paren_triage.py`-heuristic catch already on record, now a
+second independent instance of the same skill.
+
+### 2026-08-21 (session 7) — symbol_constellation: another self-written finder script, and a real data-loss catch during review of Claude's transform logic
+
+Shorter, focused session: cleaning "per this source" boilerplate out of
+`evidence.excerpt` text (a separate instance of the same phrase already
+partly cleaned from `terms.definition` in an earlier session).
+
+**Pillar 4/5 — another finder script written himself.** Same pattern as
+`find_person_duplicates.py` and the paren-cleanup finders from prior
+sessions: wrote `find_per_this_source_in_evidence.py` (parameterized SQL
+query against `constellation.db`, argparse CLI, matching the project's
+established finder-script convention) before bringing it into this
+session. I adapted the same pattern for four more finder scripts covering
+the other punctuation shapes of the same phrase; those four were mine, not
+his.
+
+**Pillar 6 — a real correctness catch during review, not just
+encouragement-worthy participation.** I proposed a mechanical rule for
+removing the `'s`-suffixed bucket (55 rows): delete everything after
+"per this source's" as boilerplate. He pushed back — correctly — that some
+of that trailing text wasn't boilerplate at all (a named cosmological
+scheme, a specific cited text, a list of archangel/patriarch pairings) and
+would be a real, silent data loss for a reader who isn't already expert in
+the source material. That's the same shape of catch as the `reshuffle_queue.py`
+and pipeline-bug catches logged in prior sessions: not accepting the first
+plausible-looking rule, actually thinking about who reads the output and
+what they'd lose. This one specifically is closer to a data-quality/product
+review skill than hands-on coding, worth tracking as its own thread if it
+keeps recurring.
+
+**Honest gap noted directly to Greg**: this session's actual transform code
+(the removal/reattachment logic across all four completed buckets) was
+written and iterated by Claude, with Greg in the review/correction seat —
+not a coding rep on his part beyond the initial finder script. Flagging
+this distinction explicitly rather than crediting the whole session as
+hands-on ETL practice.
+
+---
+
+### 2026-08-20 (session 6) — symbol_constellation: found and fixed a real pipeline bug, a design correction on a new tool, copyright/data-governance reasoning, and a first LLM-agent build (untested)
+
+Long session mixing new-source acquisition, tooling, and a genuine architecture tangent (custom subagent personas). Several concrete, evidenced pieces:
+
+**Pillar 4/5 — found and fixed a real production bug in the extraction pipeline, with actual verification discipline.** `run_queue.py`/`local_draft.py` had a latent bug: a job whose EPUB couldn't be resolved (missing file, or a failed download) looped forever, since the failure path never changed `status` or `skipped`, and the runner's selection query just kept re-picking the same job. This surfaced live — the queue runner was launched, caught spinning on job 89 within seconds via the log, killed before real waste accumulated. The fix (a `skipped` 0->1->2 counter with one retry pass) wasn't just written and trusted: it was verified with a direct two-call repro (`python3 local_draft.py 89` run twice, confirming the exact 0->1->2 transition) *before* relaunching the real batch runner. That verify-before-trusting-your-own-fix step is the actual skill here, not the fix itself.
+
+**Pillar 4/5 — a real "design for the actual requirement" correction on a self-written tool.** First version of a new `reshuffle_queue.py` (sorts the extraction queue shortest-source-first) measured length by downloading full EPUBs for anything not already local — worked, but pulled 13GB of unplanned downloads including most of an unrelated pre-existing backlog. Caught directly ("you shouldn't have to download to check size"), redesigned to use metadata-only signals (local file `stat()`, or archive.org's own reported file size from its metadata endpoint) — same coarse-ordering value, zero download cost. A clean instance of "the cheap signal was available the whole time, first pass just reached for the convenient one instead."
+
+**Pillar 6/9 — real data-governance/copyright reasoning under actual constraints**, not abstract policy: worked through a genuine fair-use distinction (facts/terminology aren't copyrightable, only expression is) to define what "reading a copyrighted source safely" actually means for this project (human-only reading, definitions sourced elsewhere, never exhaustive) — then caught my own over-engineering when a new `copyright_status='active_copyright'` value got proposed and consolidated back into the existing `murky` status on the reasoning that one gate beats two for the same practical effect. Real design restraint, not just accepting the first idea.
+
+**Pillar 9 — first LLM-agent build, honestly still unvalidated.** Built a custom Claude Code subagent (`.claude/agents/classicist.md`) — a translation/research specialist scoped to read-only tools (no DB/file-write access), with explicit anti-plagiarism instructions (produce an independent translation, don't paraphrase an existing copyrighted one). Real agent-design thinking (tool scoping for safety, not just capability). But it's untested — Claude Code loads custom agents at session start, so it wasn't recognized mid-session, and the actual Philolaus-fragment test is queued for the next session. Flagging this explicitly as designed-not-demonstrated rather than claiming a win before it's earned.
+
+---
+
 ### 2026-08-19 (session 5) — symbol_constellation paren-cleanup mega-session: another self-written tool, the sharpest pillar-9 catch yet, and real pillar-6 pipeline-architecture judgment
 
 A long, dense session pushing the parenthetical-name backlog from 760 down
