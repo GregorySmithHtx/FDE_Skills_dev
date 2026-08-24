@@ -6,6 +6,61 @@ what felt easy/hard, and any updates to the pillar levels in
 
 ---
 
+### 2026-08-24 (session 10) — symbol_constellation: a debugging-not-designing pillar-9 rep, a self-caught bug in Claude's own answer, and a first real pillar-8 data point
+
+**Pillar 9, distinct shape from 2026-08-23's entry.** That session was about
+*designing* agent governance from scratch (narrow single-purpose agents
+instead of fallible memory recall). Today was about *debugging* an
+already-built agent's flawed reasoning after the fact. Asked Synthesist to
+connect a new "Geometry" base term to existing Circle/Square/Triangle/
+Pentagram terms; it declined all of them, reasoning no source passage
+explicitly asserted the connection. Greg's response refused the easy path
+twice: first rejected the answer outright ("if the synthesist can't make
+this leap we are in bad shape"), then — critically — refused Claude's offer
+to just patch the specific instance ("I don't want you to fix them, we have
+to fix the Synthesist. What would preclude the agent from being able to
+make this connection. Is synthesist not doing any definition searches,
+also?"). That's the harder, more valuable move: demanding the actual
+mechanism be found (a rule meant to block invented passage-specific claims
+was mis-firing on plain dictionary facts) and fixed at the instruction-file
+level, not accepting a one-off correction that would leave the same bug
+live for the next term. Root cause, once traced, also directly answered his
+own diagnostic question: the agent had no dictionary-verification step for
+*taxonomic* facts, only for a base term's own definition — confirming his
+suspicion was the right one before Claude had it fully diagnosed.
+
+**A second, smaller pillar-9 rep the same session, this time catching
+Claude's own answer, not a subagent's.** Asked why several `SUPERSEDED`
+terms kept resurfacing in searches; Claude explained the convention (kept
+for audit trail, never deleted). Greg kept pushing past the first
+reasonable-sounding answer — "why not just delete them once folded in" —
+until it surfaced a real, previously-unnoticed bug: two terms superseded
+the day before still had a *live* structural relation from an active term,
+not just a stale name match. Specified the actual safety check unprompted
+("if it has zero relations and zero evidence then yes") rather than
+accepting "seems safe" — that criterion caught the real bug precisely.
+
+**First real pillar-8 data point** (table previously said "Unknown / not
+assessed yet"). Today's work was, mechanically, directing a multi-agent LLM
+pipeline in production: dispatching parallel background agents, relaying
+live mid-task guidance into a running agent via message-passing, and
+diagnosing/fixing a subagent's system-prompt reasoning gap. Not yet
+hands-on building (Claude wrote every agent definition and orchestration
+call), but real, substantive exposure to how an agent system actually
+behaves and fails in practice — worth a first mark on this pillar even
+before he writes one himself.
+
+**Pillars 5/6, incremental, same pattern as prior entries**: continued
+directing large-scale data-quality passes (paren/naming backlog across
+several hundred terms, multiple parallel batches) and made one real
+data-lifecycle architecture call — proposing a `status`/`superseded_by`
+column plus a periodic reviewed-deletion pass, after Claude surfaced (on
+request) that `PRAGMA foreign_keys` is off with no cascade rules, so a
+naive delete would silently orphan rows. Same standing caveat as every
+prior pillar-6 entry: directed and reviewed, not yet hand-built.
+
+---
+
 ### 2026-08-23 (session 9) — SQL box continued (Postgres, real bugs caught), plus the sharpest pillar-9 rep yet on symbol_constellation
 
 **Mentoring track: Postgres set up, SQL box actively worked, two real bugs
