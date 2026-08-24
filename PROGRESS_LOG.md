@@ -6,6 +6,56 @@ what felt easy/hard, and any updates to the pillar levels in
 
 ---
 
+### 2026-08-24 (session 11) — symbol_constellation: confirmed the pillar-9 fix worked, then a new kind of rep — hand-editing an agent's own instruction file
+
+**Confirmed the queued test from session 10.** Dispatched Synthesist against
+the actual Circle/Square/Triangle/Pentagram/Hexagram/Pentagon/Circle terms;
+it correctly applied the corrected instructions, connecting all 8 to the
+Geometry base term without demanding passage-level citation for a plain
+taxonomic fact — the exact fix from the prior session's debugging rep,
+verified working on the real case rather than just theorized.
+
+**New rep category: hand-editing an agent's `.claude/agents/*.md`
+instruction file himself, not application code.** Prompted by finding two
+proper-noun term rows (Orpheus, Cornelius Agrippa) with no traceable
+provenance, Greg drove a long, multi-turn structural rewrite of
+`synthesist.md` — relocating a misplaced rule (a content-word/proper-name
+boundary defined three steps after the step that needed it), catching his
+own broken design mid-draft (a `SELECT relation_id FROM term_relations
+WHERE term_a_id=? OR term_b_id=?` existence-check that referenced a
+term_id that wouldn't exist yet, since the base term hadn't been created),
+and building an entirely new task (Task 3, "base term usage search") to
+close a gap the earlier fix hadn't actually solved — a broad sibling-sweep
+the original step sequence structurally couldn't do. Two full renumbering
+passes surfaced several stale internal cross-references, self-caught on
+review. Claude's role throughout was review/flag-only; only did the final
+doc-consistency polish (numbering, "two tasks" → "three tasks") once
+explicitly told to go ahead. Same "write it yourself, get reviewed" shape
+as his Python tool-writing reps (`find_person_duplicates.py` etc.), applied
+to agent/prompt authorship instead of app code — distinct enough from both
+pillar 4 (app code) and pillar 8 (agent orchestration/tool-use code) that
+it doesn't cleanly map to either, but real evidence of directly authoring
+the text that governs an AI system's behavior, not just directing Claude
+to write it.
+
+**Also produced a real architecture-planning session, not yet built:**
+proposed making `LEARNING_ROADMAP.md`'s Phase 5 capstone real —
+symbol_constellation's typed-entity-objects/Historian-agent/timeline work
+becomes the actual vehicle, other phases mapped onto it, with an explicit
+build triage (Historian agent, `timeline_item` schema DDL, a
+date-extraction ETL, first table(s) of a SQLite→Postgres migration,
+Dockerizing, and tests/CI are his; routine/mechanical work stays Claude's).
+Real, non-manufactured justification surfaced for the Postgres migration
+specifically: symbol_constellation now routinely runs 5-7 parallel
+background agent batches against the same SQLite file, exactly the access
+pattern its file-locking handles worst. **Historian agent build itself is
+blocked** on the `timeline_item` schema not existing yet (his own note,
+this session) — no action possible there until that's designed, so today's
+contribution to that thread is the plan, not the build. Full detail:
+symbol_constellation's `log/2026-08-24.md`.
+
+---
+
 ### 2026-08-24 (session 10) — symbol_constellation: a debugging-not-designing pillar-9 rep, a self-caught bug in Claude's own answer, and a first real pillar-8 data point
 
 **Pillar 9, distinct shape from 2026-08-23's entry.** That session was about
