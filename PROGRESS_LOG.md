@@ -6,6 +6,58 @@ what felt easy/hard, and any updates to the pillar levels in
 
 ---
 
+### 2026-08-24 (session 12) — symbol_constellation: repeated the 2026-08-23 pillar-9 pattern on a new bug, plus continued (not-yet-hands-on) pillar-8 exposure at greater orchestration complexity
+
+**Pillar 9, same move as 2026-08-23, now a demonstrated pattern rather than
+a one-off.** Directed a Synthesist pass building 10 new geometry-primitive
+base terms (Point, Line, Plane, Solid, Sphere, Cube, Cone, Torus, Pyramid,
+Circle) and the relations between them. Mid-task, the agent needed a base
+Circle term to complete an assigned relation set (neither existing Circle
+term was the plain generic sense) and correctly built one on its own
+initiative — but the *same task* also found `Triangle` has only a
+category-specific sense, no base sense, the identical structural gap, and
+declined to build one, flagging it "out of scope" instead. Greg's response
+was the exact 2026-08-23 move again: "It's a genuine miss that it came to
+this conclusion and didn't create a base... Where do we need another base
+creation entry point?" — refusing to treat it as an isolated inconsistency
+and demanding the systemic cause. Root cause, once traced: the
+"build-a-base-term" trigger had only ever been written into one task's
+instructions (Task 1), never generalized to the rules that apply across
+every task, so the agent had no standing permission to act on the same gap
+found via different work. Fixed at the instruction-file level (a new
+Standing Practices rule), not the one-off case — the second time this
+exact discipline has been applied to two different subagent bugs eight
+days apart, which is closer to a demonstrated habit than a single rep.
+
+**Also, smaller: reviewed a flagged relation-type ambiguity on its own
+merits rather than deferring to the agent's framing.** A subagent flagged
+uncertainty between `instance_of` and `derivation_of` for a base-to-base
+link (an architectural "pyramid" term connected to the new geometric
+"Pyramid" primitive) and offered both readings with reasoning for each.
+Greg considered the tradeoff and made the call (`instance_of`, the
+shape-instance reading) rather than taking either the agent's suggestion
+or Claude's framing as the default answer.
+
+**Pillar 8: session 11's rating was corrected upward after review** (see
+that entry, corrected in place below) — the original write-up only
+credited the `synthesist.md` half of a coordinated two-file instruction
+edit, and had drawn a line excluding prompt/instruction authorship from
+counting toward this pillar, which doesn't match the pillar's own stated
+definition ("prompting, tool use/agents"). Moved from "Early" to
+"Developing." This session's own contribution was orchestration-direction
+volume, not authorship: directing 15+ parallel `Agent` dispatches across
+dependency-ordered waves (base primitives had to land before the solids
+that reference them, to avoid a glossarist agent racing against a
+not-yet-created FK target), diagnosing a stalled agent's actual cause (an
+external process — `sqlitebrowser` — holding the database locked, not an
+agent-side bug), and resuming a blocked agent mid-task via message-passing
+once the lock cleared, rather than restarting it from scratch. This part
+stays direction/review, same as session 10 — the level move came from
+session 11's authorship being properly credited, not from today's
+orchestration work.
+
+---
+
 ### 2026-08-24 (session 11) — symbol_constellation: confirmed the pillar-9 fix worked, then a new kind of rep — hand-editing an agent's own instruction file
 
 **Confirmed the queued test from session 10.** Dispatched Synthesist against
@@ -15,28 +67,39 @@ Geometry base term without demanding passage-level citation for a plain
 taxonomic fact — the exact fix from the prior session's debugging rep,
 verified working on the real case rather than just theorized.
 
-**New rep category: hand-editing an agent's `.claude/agents/*.md`
-instruction file himself, not application code.** Prompted by finding two
-proper-noun term rows (Orpheus, Cornelius Agrippa) with no traceable
-provenance, Greg drove a long, multi-turn structural rewrite of
-`synthesist.md` — relocating a misplaced rule (a content-word/proper-name
-boundary defined three steps after the step that needed it), catching his
-own broken design mid-draft (a `SELECT relation_id FROM term_relations
-WHERE term_a_id=? OR term_b_id=?` existence-check that referenced a
-term_id that wouldn't exist yet, since the base term hadn't been created),
-and building an entirely new task (Task 3, "base term usage search") to
-close a gap the earlier fix hadn't actually solved — a broad sibling-sweep
-the original step sequence structurally couldn't do. Two full renumbering
-passes surfaced several stale internal cross-references, self-caught on
-review. Claude's role throughout was review/flag-only; only did the final
-doc-consistency polish (numbering, "two tasks" → "three tasks") once
-explicitly told to go ahead. Same "write it yourself, get reviewed" shape
-as his Python tool-writing reps (`find_person_duplicates.py` etc.), applied
-to agent/prompt authorship instead of app code — distinct enough from both
-pillar 4 (app code) and pillar 8 (agent orchestration/tool-use code) that
-it doesn't cleanly map to either, but real evidence of directly authoring
-the text that governs an AI system's behavior, not just directing Claude
-to write it.
+**New rep category: hand-editing TWO coordinated agents'
+`.claude/agents/*.md` instruction files himself, not application code —
+under-credited in the first write-up of this entry, corrected here.**
+Prompted by finding two proper-noun term rows (Orpheus, Cornelius Agrippa)
+with no traceable provenance, Greg drove a long, multi-turn structural
+rewrite of `synthesist.md` — relocating a misplaced rule (a
+content-word/proper-name boundary defined three steps after the step that
+needed it), catching his own broken design mid-draft (a `SELECT
+relation_id FROM term_relations WHERE term_a_id=? OR term_b_id=?`
+existence-check that referenced a term_id that wouldn't exist yet, since
+the base term hadn't been created), and building an entirely new task
+(Task 3, "base term usage search") to close a gap the earlier fix hadn't
+actually solved — a broad sibling-sweep the original step sequence
+structurally couldn't do. **He then closed the loop across a second file**:
+edited `glossarist.md`'s own Reporting section so that any new
+`category='base'` term it creates explicitly flags that a Task 3 sweep is
+owed against it — necessary because Glossarist has no `Agent` tool and
+can't trigger the sweep itself, and because Glossarist gets invoked two
+different ways (via Synthesist mid-task, or directly by a human), so the
+flag had to originate from Glossarist's own output to cover both paths.
+That's real cross-agent system design, not a local fix to one file. Two
+full renumbering passes on `synthesist.md` surfaced several stale internal
+cross-references, self-caught on review. Claude's role throughout was
+review/flag-only; only did the final doc-consistency polish (numbering,
+"two tasks" → "three tasks") once explicitly told to go ahead — the commit
+that landed reflects Claude's formatting pass, not raw authorship, but the
+design and content decisions in both files were his. Same "write it
+yourself, get reviewed" shape as his Python tool-writing reps
+(`find_person_duplicates.py` etc.), applied to agent/prompt authorship
+instead of app code. **Validated working in production the very next
+session** (2026-08-24, session 12): Task 3 confirmed correct across 10 new
+base terms and ~43 relations, and the Glossarist-flags-Task-3-is-owed loop
+he built fired correctly on every one of those creations.
 
 **Also produced a real architecture-planning session, not yet built:**
 proposed making `LEARNING_ROADMAP.md`'s Phase 5 capstone real —
