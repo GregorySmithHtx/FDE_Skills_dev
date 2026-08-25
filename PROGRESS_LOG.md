@@ -6,6 +6,58 @@ what felt easy/hard, and any updates to the pillar levels in
 
 ---
 
+### 2026-08-25 (session 13) — symbol_constellation: sixth same-shaped pillar-9 rep, plus a real fix-root-cause-and-remediate-existing-damage move
+
+**Pillar 9, the established pattern on a new problem shape.** Claude reported
+that superseded terms still carrying their own `evidence` rows was fine — "by
+design," per the project's own "never delete evidence" rule. Greg didn't
+accept that at face value: "The evidence wouldn't need to be deleted if their
+term_a_id or term_b_id was updated to the active term, did they move to the
+active term?" That question — sharper than "is this OK?" — is what actually
+surfaced the bug: the evidence hadn't moved, it had been *copied*, and
+checking showed this was systemic (23 of 49 superseded terms, several
+duplicated three ways: the dead term's original row, plus a fresh copy on the
+new term, plus another fresh copy on the connecting relation). Same shape as
+every prior pillar-9 entry this project has produced (2026-08-17 loop-scoping
+bug, 2026-08-19 tool-heuristic trust, 2026-08-23 governance-at-scale,
+2026-08-24 x2 base-term-creation gaps) — refuse the reassuring answer, ask the
+question that actually tests it, then demand the systemic cause rather than a
+one-off patch. Sixth dated instance of this exact move, across six different
+problem shapes (scoping, tooling, governance, schema-gap x2, now data
+integrity) — worth treating as an established habit rather than a developing
+one; see the SKILLS_ASSESSMENT.md note below.
+
+**The fix itself, once root-caused, is a genuine production-engineering
+pattern: fix forward AND remediate backward, don't just patch the symptom.**
+Root cause was a specific instruction-file ambiguity in `synthesist.md` —
+"never delete evidence" had been read as "never move it either." Fixed at
+two levels in the same session: (1) the instruction file itself, so future
+work can't reproduce it (`UPDATE`-based repoint now explicit in both
+relevant tasks, plus a specific carve-out Greg's own question implied —
+the repoint step is always the calling agent's job, never a
+delegated-to agent's, since the delegate has no visibility into the row
+being replaced); (2) the existing damage — 22 duplicate rows identified by
+cross-referencing each superseded term's own definition text against a live
+fuzzy match (not a blind pattern), backed up first, cleaned up by hand, with
+3 edge cases deliberately left alone and named rather than force-resolved.
+Verified with `PRAGMA integrity_check` and the schema's own exactly-one-subject
+CHECK constraint before considering it done, not just "ran without erroring."
+
+**Smaller, same session: a real resource-management call once given real
+data.** After Claude flagged the cost of spawning multiple agent batches (per
+standing instruction) and ran a scoped 18-term pilot to get real numbers
+(~12k tokens/term, 44% of terms needing a new-term delegation), Greg chose to
+drive the same already-running agent directly via Remote Control for the
+remaining ~330 terms rather than have Claude keep re-spawning it — avoiding
+the fixed per-spawn cold-start overhead that pilot had just quantified. Not a
+big architectural call, but a concrete instance of using measured cost data
+to change an execution strategy rather than defaulting to the original plan.
+
+Full session detail (paren backlog closing to zero, the evidence-duplication
+bug): `symbol_constellation/log/2026-08-24.md`, "Session 3."
+
+---
+
 ### 2026-08-24 (session 12) — symbol_constellation: repeated the 2026-08-23 pillar-9 pattern on a new bug, plus continued (not-yet-hands-on) pillar-8 exposure at greater orchestration complexity
 
 **Pillar 9, same move as 2026-08-23, now a demonstrated pattern rather than
