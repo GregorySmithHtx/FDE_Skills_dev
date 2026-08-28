@@ -15,7 +15,7 @@ Goal: get the rust off before building anything real.
       promises/async-await, modules, then TypeScript's type system
 - [ ] Python refresh: virtual envs (`uv` or `venv`), type hints, f-strings,
       packaging basics
-- [ ] SQL: joins, aggregates, indexes, writing queries directly against a
+- [x] SQL: joins, aggregates, indexes, writing queries directly against a
       real Postgres database (not through a platform data-source builder)
 
 ## Phase 1 — Full-stack rebuild (4–6 weeks)

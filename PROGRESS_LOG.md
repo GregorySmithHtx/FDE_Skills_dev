@@ -6,6 +6,125 @@ what felt easy/hard, and any updates to the pillar levels in
 
 ---
 
+### 2026-08-28 (session 15) — first JS/TS roadmap rep: Node/nvm set up, a real closure gotcha found and fixed self-directed
+
+Short, deliberately light session immediately after closing the SQL box —
+first work on `LEARNING_ROADMAP.md` Phase 0's JS/TypeScript item, picked up
+same-night. No Node/JS runtime existed on this machine at all; installed
+`nvm` (user-space, no `sudo` available/needed) and Node v24.20.0 LTS as
+setup, then stopped there rather than trying to also cover
+arrow-functions/destructuring/promises/modules in one sitting — same
+single-concept-per-session discipline as the SQL sessions.
+
+**Real, mostly self-directed rep on the classic `var`-in-a-loop-closure
+gotcha.** Given the task (a `for` loop with `var i`, a `setTimeout(...,0)`
+callback logging `i`) with only the shape described, not code supplied.
+Predicted correctly, unprompted, that the bug was scoping-related before
+being asked to explain it. Ran it, got the expected surprising result (five
+`5`s printed instead of `0 1 2 3 4`) — same "ran clean, output is wrong"
+shape as the SQL fan-out bug earlier the same night. **Fixed it himself
+before being asked to** — swapped `var` for `let` and, on his own
+initiative, wrote the callback as an arrow function rather than the
+`function(){}` he'd been shown, verified the corrected `0 1 2 3 4` output.
+
+**Recalled real, dormant JS knowledge unprompted.** After the `let` fix
+landed, asked about the pre-ES6 workaround for this exact problem,
+correctly recalling "something with a self-executing function" (an IIFE)
+before being told what it was called — accurate partial recall of a
+technique he said he used to write "a lot for various purposes," now tied
+back to the specific closure-scoping mechanism that made it necessary in
+the first place (a fresh function-parameter binding per invocation,
+same effect `let`'s per-iteration block binding now gives automatically).
+
+**Pillar 4 note**: this is a genuine from-scratch JS rep, not adapting an
+existing file — closer to the "real fundamentals, not guided scaffolding"
+shape of the 2026-08-18 Python session than the "extend an existing
+template" shape most other pillar-4 entries have had. First evidence this
+project has of pre-existing (if rusty) JS knowledge actually surfacing
+under light prompting rather than needing to be taught cold.
+
+---
+
+### 2026-08-27/28 (session 14) — SQL box closed for real: aggregate fan-out bug, HAVING, subqueries, and a sharp "don't trust the terminal either" catch
+
+Direct continuation of the unfinished `agg_join.sql` exercise from session 9
+(2026-08-23), which had been left mid-bug ("too much at once" — join +
+aggregates + `HAVING` combined). This session finished it and closed out
+`LEARNING_ROADMAP.md`'s Phase 0 SQL box (joins, aggregates, indexes, real
+Postgres queries) — checked off for real, not just attempted.
+
+**Real, self-driven debugging arc on the abandoned query, no code handed
+over.** Coaching stayed hints-only throughout — Greg ran every query and
+fix himself. First bug: an unmatched paren plus a stray English sentence
+left as a placeholder, resolved on his own before the session properly
+started. Second: correctly recognized that the AND/OR-parens lesson from
+the 2026-08-23 session (`session 9` in this log) *didn't* actually apply to
+this query's two `OR`-only clauses — real transfer-learning judgment, not
+just pattern-matching "parens = good" onto every query.
+
+**The real find of the session: a genuine, non-obvious SQL correctness
+bug — aggregate fan-out from a double join.** The combined join+aggregate
+query (`term_relations` → `terms` → `evidence`, all off the same
+`term_id`) ran without erroring and produced plausible-looking numbers, but
+`evidence_count` was silently wrong: joining two "many" sides to the same
+key produces a full R×E cross-product before `COUNT` ever runs, so
+`COUNT(evidence.evidence_id)` was counting `relation_count × real_evidence_count`,
+not the real evidence count. Caught the same way as the best pillar-9
+entries on record: not by accepting a clean-looking result, but by noticing
+`evidence_count` was a suspiciously clean multiple of `relation_count`
+across every row (1x, 2x, 3x, 6x, 6x), then verifying one term (B.O.T.A.,
+term_id 4041) against a direct, ungrouped ground-truth count (real answer:
+1, not the 357 the buggy query reported). Root cause reasoned out and fix
+applied correctly (`COUNT(DISTINCT evidence.evidence_id)`), no hint needed
+once the ratio pattern was pointed out. A real bug class worth having in
+hand — this exact fan-out shape shows up constantly in production
+reporting queries with more than one child join.
+
+**HAVING and subqueries, both landed as genuine single-concept reps** (per
+the "one concept at a time" lesson from 2026-08-23), not copied from an
+example:
+- `HAVING` vs. `WHERE`: built the "categories with >50 terms" query from
+  scratch, self-corrected two real bugs along the way (clause order —
+  `HAVING` written before `GROUP BY` — and grouping granularity — grouping
+  by `name, term_id, category` instead of `category` alone, which silently
+  produced 0 qualifying rows since every group ended up size-1). Answered
+  the underlying "why" correctly once asked directly: `WHERE` filters rows
+  before `GROUP BY`/aggregation happens, so no aggregate value exists yet
+  for it to compare against.
+- Subqueries: given the task ("categories above the average term count per
+  category") with no worked example, reached for a **window function**
+  (`AVG(COUNT(*)) OVER ()`) rather than the classic nested-`SELECT`
+  form — a more advanced tool than what was hinted at, applied correctly
+  on the first real attempt. Self-corrected the follow-on bug (`HAVING`
+  with no `GROUP BY`, which collapses the whole result to one group and
+  breaks non-aggregated `SELECT` columns) by reasoning to `WHERE` being the
+  right clause once it was pointed out that `avg_count` was already a
+  resolved per-row scalar by that point, nothing left to aggregate.
+
+**Second real catch, arguably sharper than the SQL bug itself: distrusting
+his own terminal output, not just AI output or a heuristic tool.** After
+getting the subquery working, noticed unprompted that the result set looked
+short — 8 categories shown, with a gap between the average (~60.6) and the
+smallest reported row (162) that didn't look right for 114 total
+categories. Flagged it as a direct question rather than accepting the
+output. Turned out to be real: every one of his pasted results all session
+had been silently truncated by psql's pager (`less`), showing one screenful
+and cutting off before the true row count — the SQL had been correct the
+whole time (25 categories >50, 23 above the true average), verified by
+re-running without a pager and cross-checking against a full,
+unfiltered category-count listing. Same underlying skill as the
+2026-08-19 "a tool's 'ok' label is an approximation" catch and the
+2026-08-21 orphaned-`evidence.term_id` catch — extended here to a new
+target: **the terminal/display layer itself**, not a heuristic script or an
+AI suggestion. Worth naming as its own instance of the pillar-9 pattern:
+verification discipline applied to literally everything in the chain,
+including the tool used to look at the results.
+
+**Roadmap status**: `LEARNING_ROADMAP.md` Phase 0 SQL box now checked off.
+Remaining Phase 0 items: JS/TypeScript and Python refresh.
+
+---
+
 ### 2026-08-25 (session 13) — symbol_constellation: sixth same-shaped pillar-9 rep, plus a real fix-root-cause-and-remediate-existing-damage move
 
 **Pillar 9, the established pattern on a new problem shape.** Claude reported
