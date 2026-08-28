@@ -6,6 +6,156 @@ what felt easy/hard, and any updates to the pillar levels in
 
 ---
 
+### 2026-08-28 (session 16) — destructuring box closed: a self-found constructor bug, a real default-value misfire caught via edge-case testing, and a forward-reaching question that landed a legitimate idiom
+
+Direct continuation of session 15 the same night, moving on to
+`LEARNING_ROADMAP.md`'s destructuring item within the JS/TS box. Same
+hints-only coaching model as the closure session — task given as a shape
+(object/nested/parameter destructuring, array swap) with no code supplied,
+Greg wrote and ran every version himself in `scope.js`.
+
+**Scope expansion, unprompted, then a real gap once the actual target
+skill was checked.** First pass built a full ES6 `Term` class with a
+constructor, private-by-convention getters, and a `setSource` method —
+more than asked for, real command of class syntax. But none of the first
+draft actually used destructuring (`.getName()`/`.getCategory()` calls and
+dot-notation instead) — caught and named directly rather than praised on
+the surface shape, and corrected immediately once pointed out (`const
+{name, category} = Athena;` landed on the first retry).
+
+**Genuine, self-found bug: a constructor argument-order mismatch, not a
+destructuring bug at all.** Nested-destructuring `let {title} =
+Athena.source` returned the author's name instead of the title. Root
+cause: the constructor call passed only 5 args to a 6-param constructor
+(`term_id, name, category, definition, source_title, source_author`), so
+`"The Iliad"` landed in the `definition` slot and `"Homer"` landed in
+`source_title` — everything after `category` shifted by one position.
+Diagnosed correctly once pointed at "count arguments vs. parameters,
+match position by position" as the thing to check, and fixed by
+reordering the constructor's parameter list to match the call's actual
+intent (`source_title, source_author` right after `category`) rather than
+patching the call site — arguably the better fix, since it let
+`definition` legitimately fall back to its existing `|| "Base"` default
+instead of requiring a value that wasn't the point of the exercise.
+Verified by running the file, not just reading it (`node scope.js`,
+confirmed `title` now printed `"The Iliad"`).
+
+**A real default-value misconception, caught by testing the edge case
+rather than being told.** First parameter-destructuring attempt wrote
+`({name, category} = Term)` — read (reasonably, coming from
+statically-typed background) as something like a type annotation. Rather
+than just explaining this was wrong, the check was framed as an
+experiment: call `getTerm()` with no argument and see what happens.
+Result was "weirder" than a clean crash — confirmed the `= Term` value
+was actually a *default*, silently destructuring off the class object
+itself when no argument is passed, not any kind of type constraint.
+Self-corrected by removing the bogus default entirely, then intentionally
+re-ran the crash (`Cannot destructure property 'name' of 'undefined'`) to
+see the honest failure mode before deciding what the real fix should be.
+
+**Forward-reaching question, not just task completion — landed a real
+idiom.** After finishing the assigned exercise, asked unprompted whether
+there's "a cool one-line" way to make `getTerm()` tolerate being called
+with no argument at all, rather than crashing. Correct idiom
+(`({name, category} = {})`, defaulting the whole destructured parameter to
+an empty object so destructuring `{}` succeeds and yields `undefined`
+fields instead of throwing on `undefined` itself) applied and verified in
+one pass once explained — real evidence of curiosity extending past the
+minimum ask, matching the same "asked about the pre-ES6 IIFE workaround
+unprompted" pattern from session 15.
+
+**Array swap: a real conceptual gap, then two self-corrections in one
+pass.** First attempt (`let [c,d] = [b,a];`) produced the correct swapped
+*values* but assigned them to two brand-new variables, leaving `a`/`b`
+themselves untouched — a real miss of the actual goal (swap in place),
+caught by direct comparison ("`a` and `b` themselves are untouched") rather
+than accepted as done because the printed output looked right. Second
+attempt fixed both issues at once: reused `a`/`b` as the destructuring
+targets, and correctly dropped `let` from the reassignment line (`[a,b] =
+[b,a];`, an assignment onto already-declared variables, not a new
+declaration) without needing that second point spelled out.
+
+**Roadmap status**: `LEARNING_ROADMAP.md`'s JS/TS box now has `let`/`const`
+and destructuring covered; promises/async-await, modules, and TypeScript's
+type system remain. Continuing directly into promises/async-await same
+session.
+
+**Promises/async-await, same session — a long real bug-fixing arc, then a
+sustained architecture pushback against Claude's own recommendations that's
+worth logging as its own thing.** Task given as a shape (wrap a `setTimeout`
+DB-lookup simulation in a `Promise`, consume via `.then()/.catch()`, then
+rewrite via `async/await`, then `Promise.all`), no code supplied, built and
+run in `scope.js` against the same `Term` class/`Athena` data.
+
+Real, self-found bugs across several review passes, hints only: an implicit
+global from a missing `let`; correctly predicting `Promise { <pending> }`
+would print before being told why, once asked to reason about *when* the
+`setTimeout` inside actually fires relative to the synchronous
+`console.log` line; an empty-object-destructuring `{}` typo standing in for
+a `reject` parameter name (twice — caught, "fixed," then found again after
+a copy-forward); constructing `new Error(...)` and *resolving* with it
+instead of calling `reject(...)` — a real, easy-to-miss async
+misconception (building an Error object doesn't reject anything by
+itself); an unhandled-rejection crash from a `.then()` with no paired
+`.catch()`; and a harmless-but-sloppy double resolve/reject call on the
+same code path, self-cleaned once flagged.
+
+**The real material of the session: repeated, well-reasoned pushback
+against Claude's own suggested designs, not just bug-fixing.** Given
+`.then()` baked inside `getTermsById` itself (his own first design), it was
+flagged as reducing the function's reusability — the caller couldn't get
+the actual value back, only ever see it logged. He accepted the point in
+the moment, then **reopened it later, unprompted**, arguing the
+`try/catch`-wrapped `async/await` rewrite he'd just been shown was "way
+worse" — and he was right for a real reason: he'd correctly noticed on his
+own that sequential `await` calls serialize independent lookups that used
+to run concurrently. Shown the `Promise.all` + `await` fix for that, he
+rejected it too ("I don't like this at all") — again for a real, specific
+reason once pressed: `Promise.all`'s fail-fast semantics mean one rejected
+lookup wipes out an already-successful result, and the `try/catch` wrapper
+around it is ceremony he didn't want. He then **independently derived the
+actual fix himself**: go back to resolving with `object | null` instead of
+using `reject`/`.catch()` at all, correctly reasoning that "not found" is
+an *expected* outcome, not an exceptional one (the same distinction
+`Array.find()` or a DB `findOne()` makes) — landing on the mature,
+textbook-correct answer through his own repeated dissatisfaction with each
+intermediate version, not because a "correct" pattern was handed to him.
+He then tried to use that same win to re-open the original `.then()`-inside
+critique ("that's why I liked the then inside the function also",
+"so there is no setter") — a genuine, close conflation of two different
+design questions (resolve-vs-reject semantics for an ordinary case, versus
+a data-fetching function baking in one specific consumer's action and
+destroying reusability for everyone else) that took real distinguishing to
+untangle, and he tracked the distinction once it was drawn precisely.
+**Closed with a sharp, honest meta-observation of his own**: noted that in
+this specific single-consumer toy script, "return raw, let the caller
+decide" and "console.log inside the function" are actually
+observationally identical, since there's only ever one caller — correctly
+recognizing a real limit of the exercise's own design rather than either
+defending the abstraction dogmatically or accepting the critique as
+proof the principle itself was wrong.
+
+**Pillar 9 note, a new flavor of the established pattern.** Every prior
+pillar-9 entry is about catching wrong output from a subagent, a tool, or
+(rarely) Claude's own code suggestions. This session is the pattern turned
+on Claude's own *design* recommendations mid-lesson, sustained across
+several rounds rather than a single catch, with at least one clear instance
+of landing on the textbook-correct professional answer (resolve-not-reject
+for an expected empty result) through his own reasoning rather than being
+told. Worth citing alongside the existing pillar-9 log as an eighth
+instance, in a new domain (JS/TS fundamentals) and a new target (a
+teaching session's own suggested designs, not a subagent or a heuristic
+tool).
+
+**Roadmap status, final for the session**: `LEARNING_ROADMAP.md`'s JS/TS
+box now has `let`/`const`, destructuring, and promises/async-await
+covered (mechanics run and verified in `scope.js`, though the file's final
+state uses the resolve-with-`null` pattern rather than reject/`.catch()`,
+per the above). Modules and TypeScript's type system remain, plus the
+separate Python refresh item.
+
+---
+
 ### 2026-08-28 (session 15) — first JS/TS roadmap rep: Node/nvm set up, a real closure gotcha found and fixed self-directed
 
 Short, deliberately light session immediately after closing the SQL box —
