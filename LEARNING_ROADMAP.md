@@ -11,7 +11,7 @@ Goal: get the rust off before building anything real.
 
 - [x] Git: branching, rebase vs. merge, resolving a real conflict, PR workflow
 - [x] Command line fluency: shell basics, piping, editing files without an IDE
-- [ ] Modern JS/TypeScript: `let`/`const`, arrow functions, destructuring,
+- [x] Modern JS/TypeScript: `let`/`const`, arrow functions, destructuring,
       promises/async-await, modules, then TypeScript's type system
 - [ ] Python refresh: virtual envs (`uv` or `venv`), type hints, f-strings,
       packaging basics

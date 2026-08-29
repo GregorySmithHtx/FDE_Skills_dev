@@ -6,6 +6,119 @@ what felt easy/hard, and any updates to the pillar levels in
 
 ---
 
+### 2026-08-29 (session 17) — modules exercise finished, then TypeScript's type system closes out the whole JS/TS box
+
+Direct continuation of session 16, picking up the modules exercise
+mid-stream (`term.js` already split out with `Term` as a named export,
+`scope.js` importing it). Same hints-only coaching model throughout — task
+given as a shape, no code supplied, Greg wrote and ran every version
+himself in `scope.js`/`term.js`.
+
+**Modules, finished.** Verified the existing named-export split ran
+clean, then a real "why did this work" question worth its own note:
+neither of us had created a `package.json` with `"type": "module"`, and
+the files were still `.js` not `.mjs` — by the stated rule that should
+have thrown `SyntaxError: Cannot use import statement outside a module`.
+It didn't. Pushed as a genuine Socratic chase (wrong first guess: "relative
+link?") down to the right answer on his own: Node's **module syntax
+detection** (stable since Node ≥22.7, confirmed running on his v24.20.0),
+which scans a `.js` file with no declared type for top-level
+`import`/`export` before committing to a parse mode. Landed the concept
+correctly once pointed at "what would Node be looking at before it runs
+a single line."
+
+**A real, self-caught misplaced-file bug, unprompted.** Asked to make the
+module type explicit via `package.json` (a genuine "how do I" question,
+answered directly rather than Socratically, per the established split
+between concept-explanation and bug-hunting) — first attempt created it in
+the wrong repo entirely (`symbol_constellation/package.json` instead of
+`FDE_Skills_dev/package.json`, two separate working directories). Caught
+once pointed at "Node walks up from the file it's running, not from
+wherever you happened to create the file," self-corrected by moving it,
+verified `node scope.js` still worked from the new location.
+
+**Named export for `getTerm`, then a genuinely better answer than the one
+hinted at.** Correctly added `getTerm` as a second named export alongside
+`Term`. Asked next to combine a default export (`Term`) with a named one
+(`getTerm`) in one import statement — the hint given was the destructured
+form (`import Term, { getTerm } from ...`), but he independently reached
+for the **namespace import** form instead (`import Term, * as term from
+...`, then `term.getTerm()`), a different-but-equally-valid syntax I hadn't
+described. Confirmed working, then explained the real distinction between
+the two forms (destructured single-name pull vs. bundling every named
+export into one object) — a genuine "landed on a real correct alternative,
+not just the one I demonstrated" instance, same shape as the `Promise.all`
+pushback and the `{}` array-swap idiom from prior sessions.
+
+**TypeScript's type system — the whole remaining Phase 0 JS/TS item,
+closed in one sitting.** Converted `term.js` to `term.ts` with real type
+annotations, driven entirely by reading and reacting to `tsc`'s own error
+output rather than being handed a target state. Genuinely productive
+arc despite (see below) real, sustained, and pre-declared distaste for the
+language as a design philosophy — going in already on record (from the
+inter-session gap) that TS "tries to get rid of the parts of JS that made
+it different from every other language."
+
+- Started at 20 real compiler errors on the naive conversion (types added
+  to constructor params only, no class field declarations). Correctly
+  generalized the pattern himself once prompted to look for it: 17 of the
+  20 were the same `Property 'X' does not exist on type 'Term'` shape, one
+  root cause (TS requires field declarations for anything the constructor
+  assigns to `this`) repeated many times, not 17 separate problems.
+- Applied **parameter properties** (`public term_id: number`, etc.) after
+  it was introduced as a real language feature answering his own
+  "engineer gets paid by the hour" complaint about the declare-type,
+  redeclare-in-constructor, reassign-in-body repetition — correctly,
+  except one genuine self-made mistake: added `public source: object` as
+  a parameter property despite having been told directly beforehand that
+  `source` wasn't eligible (it's built from `source_title`/`source_author`,
+  not passed through). Caught when shown the consequence (the constructor
+  body immediately overwrites it, so the param does nothing), removed it
+  correctly.
+- Field declarations for the five arrow-function method properties, and
+  the `object`-typed `source`/`getSource` (too vague a type to allow
+  `.title`/`.author` access), and `getTerm`'s untyped destructured
+  parameter — all fixed correctly across the 20→11→4→0 error arc, each
+  edit applied by hand and verified by rerunning `tsc`, no fix skipped or
+  faked.
+- Real conceptual push at the end, unprompted, initially misreading which
+  params had actually been called "dead" (thought `source_title`/
+  `source_author` were included; they weren't) — resolved cleanly once
+  the distinction was restated precisely (direct 1:1 passthrough vs.
+  "feeds into something else").
+- Caught, without being told, that `tsc term.ts`'s default output
+  filename (`term.js`) silently overwrote the hand-written ES-module file
+  from the earlier exercise — flagged and verified nothing broke
+  (`node scope.js` still ran clean against the compiled output), landed
+  correctly on the real framing: `term.js` is now a build artifact, `.ts`
+  is the source of truth going forward, not a bug.
+- Noticed and asked about the compiled JS output directly: the emitted
+  bare `term_id;`/`name;`/etc. lines at the top of the class. Given a real
+  answer, not just reassurance — those are actual ES2022 **class fields**,
+  a genuine plain-JS feature independent of TypeScript, not
+  TS-only ceremony, even though the type annotations themselves are fully
+  stripped at compile time (TS never runtime-checks anything).
+
+**Attitude, logged honestly rather than softened.** Sustained, specific,
+articulate dislike of TypeScript throughout — not vague frustration, but a
+consistent, well-formed critique (structural typing forcing JS's dynamic
+duck-typing into declared shapes; the same field mentioned three times
+across declaration/constructor-param/assignment; "written in anticipation
+of y'all [AI], not for humans"). Kept working through every fix regardless,
+correctly self-diagnosing at one point that the tedium was really about
+being on the most mechanical, least interesting part of the language
+(annotation ceremony) rather than the parts that actually catch bugs.
+Real, once bugs stopped being findable ("no new value" pushback each time
+the loop repeated) — but never actually blocked; every fix that got
+attempted got finished and verified.
+
+**Roadmap status**: `LEARNING_ROADMAP.md`'s JS/TypeScript box now fully
+checked off — `let`/`const`, destructuring, promises/async-await, modules,
+and TypeScript's type system all covered with real, verified reps.
+Only Python refresh remains in Phase 0.
+
+---
+
 ### 2026-08-28 (session 16) — destructuring box closed: a self-found constructor bug, a real default-value misfire caught via edge-case testing, and a forward-reaching question that landed a legitimate idiom
 
 Direct continuation of session 15 the same night, moving on to

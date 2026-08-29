@@ -1,32 +1,8 @@
-class Term {
-    constructor(term_id, name, category, source_title, source_author,definition, ) {
-        this.term_id = term_id;
-        this.name = name;
-        this.category = category;
-        this.source = {
-            title: source_title,
-            author: source_author
-        };
-        this.definition = definition || "Base";
-        this.getTermId = () => this.term_id;
-        this.getName = () => this.name;
-        this.getCategory = () => this.category;
-        this.getSource = () => this.source;
-        this.setSource = (title, author) => {
-            this.source.title = title;
-            this.source.author = author;
-        }
-    }
-    
-    
-
-};
+import Term, {getTerm} from"../FDE_Skills_dev/term.js"
 
 let Athena = new Term(1, "Athena", "Greek Mythology", "The Iliad", "Homer");
 const {name, category} = Athena; //
 let {title} = Athena.source; //
-
-let getTerm = ({name,category} = {})=>{return name + "(category: " + category + ")"}
 
 console.log(getTerm(), title);
 let terms = [Athena];

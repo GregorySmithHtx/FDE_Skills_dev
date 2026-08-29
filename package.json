@@ -1,0 +1,1 @@
+{"name":"js_roadmap","version":"0.0.1","scripts":{"term":"term.js","scope":"scope.js"},"type":"module","dependencies":{"typescript":"^7.0.2"}}
