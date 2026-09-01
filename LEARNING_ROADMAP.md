@@ -13,7 +13,7 @@ Goal: get the rust off before building anything real.
 - [x] Command line fluency: shell basics, piping, editing files without an IDE
 - [x] Modern JS/TypeScript: `let`/`const`, arrow functions, destructuring,
       promises/async-await, modules, then TypeScript's type system
-- [ ] Python refresh: virtual envs (`uv` or `venv`), type hints, f-strings,
+- [x] Python refresh: virtual envs (`uv` or `venv`), type hints, f-strings,
       packaging basics
 - [x] SQL: joins, aggregates, indexes, writing queries directly against a
       real Postgres database (not through a platform data-source builder)

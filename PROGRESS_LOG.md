@@ -6,6 +6,244 @@ what felt easy/hard, and any updates to the pillar levels in
 
 ---
 
+### 2026-09-01 (session 21) — `timeline_item` schema closed out (verified live), then FastAPI: real blank-page paralysis confirmed, and a real-time pace correction that landed fast
+
+Same-day continuation of `theutus-db-timeline-phase`, picking up where session 20 left off.
+
+**`timeline_item` model coverage finished, own hands, Claude review.** Wrote the `Era`/`TimelineItemType` picklists himself; initially a `timeline_item_types` lookup table (matching `relation_types`' pattern), then his own YAGNI call to swap it for a plain enum + `CheckConstraint` (matching `Category`'s existing precedent) once he judged a full lookup table wasn't earning its cost yet — explicit reasoning: try the cheap version, revisit at ~10 item types if friction shows. Several real bugs surfaced and fixed across two review passes: missing `CheckConstraint` import, a duplicate constraint name, `native_enum`/`default` passed to the wrong constructor (`Enum(...)` vs. `mapped_column(...)`), a `Mapped[str]` hint that didn't match the actual enum return type. The sharpest one — Claude caught that SQLAlchemy's `Enum` type serializes by a Python enum member's `.name`, not its `.value`, by default, which silently conflicted with his hand-written `CheckConstraint` text (`'BCE'` vs. `'bce'`); Greg's own fix (make name and value identical, matching `Category`'s existing shape) was simpler than the `values_callable` fix Claude proposed. Migration generated, applied to `theutus_scratch`, and functionally verified live (both constraints tested to actually reject bad values, ORM-side default tested to actually apply) — not just trusted because it ran.
+
+**FastAPI: the "rusty pillar 4" prediction from 2026-08-17 confirmed precisely, on the first real from-scratch web-framework rep.** That session's note flagged "may not know what to write in the first line without a template" as the concrete shape of the gap. That's exactly what happened here — Greg had stubbed a `FastAPI()` app but it structurally couldn't run (app built inside a function uvicorn can't import, no code that actually started a server), and said directly he didn't know how to run it, use the models, or "really anything."
+
+**Pillar 9 — a fast, explicit correction of the teaching pace itself, twice in one exchange.** First pass: Claude reviewed a real attempt (a broken search route + an unexecuted/mis-wrapped query) using "real bugs" framing and multiple simultaneous issues — Greg pushed back hard ("I don't know any of this at all, slow tf down, stop writing so much about real bugs"). Correction applied: fewer words, no bug-listing language. Second pass, still too much: a single instruction still bundled a decorator change, a signature change, and a new concept (query vs. path parameters) together — Greg pushed back again, sharper: "why are you cramming so much into the first thing, one thing at a time, why are we even working on filtering nothing." That last clause is itself a real, positive data point (see below), not just a complaint.
+
+**A genuine judgment catch mid-lesson, worth logging as success not just correction.** Greg's "why are we even working on filtering nothing" was correct: testing a search endpoint against an empty table gives no visible signal either way, a real test-design/feedback-loop instinct, even while still overwhelmed by basic FastAPI syntax. Task order got reversed on his call — build a create endpoint first (something to look at) before a search endpoint (something to filter). Two rusty-syntax and one solid-instinct data point in the same ten minutes — consistent with the existing calibration (pillar 4 syntax genuinely rusty, pillar 6/9 judgment intact underneath it).
+
+**State at session end (mid-lesson, not a stopping point):** `GET /` and `POST /terms` (with a working `Depends(get_db)` session, verified end-to-end against live Postgres) both run. `GET /terms/count` is written but untested. The search route is still broken as written (wrong path-vs-query-param syntax, query never executed, wrapped in a stray set literal) — flagged, not yet fixed, next step for the morning. `__init__.py` left uncommitted for this reason; `link_models.py`/`reference_models.py`/the new migration were committed since those are finished and verified.
+
+---
+
+### 2026-08-31 (session 20) — hub/satellite/link/reference framework derived from first principles, Alembic adopted (mostly Claude's hands), and a real-time correction of the collaboration itself
+
+Same-day continuation of session 19's `theutus-db-timeline-phase` work, picking up mid-model-build.
+
+**Pillar 6 — the deepest architecture-design arc yet: several rounds of independently-derived generalization, not isolated catches.**
+- Spotted the `term_relations`/`evidence` FK-cycle problem himself while proposing a third FK column for provenance, before it got built.
+- Asked the right question when he wanted a real paradigm instead of ad hoc rules — "it seems like Wikipedia has this down, but I don't know how it does it" — rather than continuing to guess at rules piecemeal.
+- Once handed Wikidata's actual statement/property model, correctly generalized it into his own schema's needs: a domain/range-style constraint idea, and — unprompted — a general rule ("a satellite's term-pointer should be the only one it has") that he then applied himself to catch two violations (`sources.author_person_id`, `sources.sub_system_id`) that had been sitting in his own design.
+- Independently pushed back on a proposed `UNIQUE(term_a_id, term_b_id, relation_type)` constraint, correctly identifying the real risk (two sources disagreeing about the same edge) before being shown why the `evidence` table's multiplicity already resolves it.
+- Drove the `SubSystem`-to-hub-term promotion decision himself, applying the same "does this satellite have real scalar detail, or is it just a category tag" test he'd already used on `Person`/`Event`.
+
+Honest caveat: the vocabulary (Data Vault's hub/satellite/link/reference terms, RDF/OWL domain/range framing, Wikidata's actual internal model) was supplied by Claude when asked directly for industry nomenclature — but the architectural reasoning and its application to his own schema, repeatedly, was his.
+
+**Pillar 9 — a real-time correction of the collaboration itself, a sharper/faster version of the "trust calibration" gap already being tracked.** Claude executed the entire Alembic adoption directly (init, `env.py` wiring, authoring + hand-porting the trigger SQL into a migration, applying it) on "this looks like administrative plumbing" reasoning — the same bucket as an earlier file-split Claude had also done directly without objection. Greg's correction: "I know this is a lot, but next time let me do new things at least once" — naming precisely why the file-split precedent didn't generalize (mechanical *and* already-known territory vs. mechanical-looking *and* genuinely new tooling). The 2026-08-16 note on this pillar flagged that corrections "tend to land late — after a bad pattern has already run for a while — rather than on first repeat"; this one landed the same session, immediately after the pattern completed.
+
+**Pillar 4 — continued hands-on SQLAlchemy reps, incremental, not yet self-verified before review.** Wrote `RelationChainMember`, `RelationChain`, `Evidence`, and `TimelineItem` himself. Real, specific bugs each round: missing `primary_key=True` on a composite key (attributed to editor/narrow-screen, not a concept gap — self-identified once shown); a stray `relation_id` column on `RelationChain` duplicating the junction table's job; DDL/ORM nullability mismatches. All caught in review, not yet self-caught before running — same "tool is still new" arc noted in session 19.
+
+**Honest caveats.** The Alembic setup itself (init, `env.py`, autogenerate, hand-porting triggers, applying the migration) was almost entirely Claude's hands, at Greg's explicit "let's set it up" — exactly what his own pillar-9 correction above flags as the gap to fix next time, not evidence of a demonstrated skill yet. The Postgres Unix-socket-vs-TCP connection bug that blocked the first `alembic revision --autogenerate` was Claude's catch during setup, not Greg's — a real, useful bug (would have hit the FastAPI app too, whenever it starts using the engine), just not his catch.
+
+**Roadmap status**: `theutus-db-timeline-phase` schema is now migration-managed (Alembic baseline applied and verified against `theutus_scratch`, both structurally and with functional trigger tests) and pushed to a new private GitHub repo. Next: finish remaining model coverage, then a minimal ingestion script for one real term (Cornelius Agrippa) before FastAPI routes.
+
+---
+
+### 2026-08-30/31 (session 19) — Phase 1 kicks off for real: a Postgres schema design arc for the timeline/historical-figures domain, first SQLAlchemy models
+
+First actual Phase 1 ("full-stack rebuild") work, in the separate
+`theutus-db-timeline-phase` repo — the `timeline_item`/historical-figures
+design that's been sitting in `symbol_constellation`'s
+`TIMELINE_ITEM_DESIGN.md` since 2026-08-29 finally became real DDL, then a
+first pass at SQLAlchemy models on top. Stack choice made this session:
+FastAPI + Postgres + SQLAlchemy ORM (over raw SQL), his own call when asked
+directly.
+
+**Pillar 6 — several rounds of real, unprompted schema-design judgment,
+including catching Claude's own design.** Across a long design
+conversation (spanning the tail of 2026-08-29 and continuing 2026-08-30):
+- Correctly reversed an early `entity`/`entity_relations` naming proposal
+  back to `term`/`term_relations` once subtype tables absorbed all the
+  type-specific shape — reasoned that a differently-named generic parent
+  table stopped buying anything once its role fully matched `term`'s.
+- Independently proposed that `sources.author` and `sources.title` (plain
+  free text at the time) should link to existing `person`/`term` rows
+  instead of duplicating identity the graph already has — triggered by
+  recognizing SQLite already has a `category='text'` precedent
+  (`The Pictorial Key to the Tarot`, term 5410) for treating a work as its
+  own term, not just a source's title string.
+- Caught, unprompted, that plural naming was inconsistent across the
+  schema (`person`/`event` singular against every other table's plural)
+  before rebuilding the DB — a real "would this bite later" catch, not
+  cosmetic.
+- Simplified his own prior design further: recognized a source and its
+  "work" term are always 1:1, so a separate `work` table was unnecessary
+  indirection — `sources` should just carry the `term_id`/`external_id`
+  bridge directly, same shape as `person`/`event`. Also correctly reasoned
+  that `terms.category` should stay as a loose, non-authoritative signal
+  for now rather than block on designing the eventual `term_type`
+  mechanism — right-sized scope call, not gold-plating.
+- **The sharpest one — caught Claude's own suggested fix as wrong, then
+  derived the correct model himself.** Claude had suggested dropping
+  `sources.title` entirely in favor of deriving it from the linked term's
+  `name`, reasoning every source would have exactly one work-term. Greg
+  caught the flaw: a book's full title can contain parens/subtitles that
+  this project's own naming discipline explicitly bans from a term's
+  `name` (the "glossary test" rule already established in
+  `symbol_constellation`). Landed on the right split himself — `title`
+  stays the full bibliographic string, `name` stays the glossary-safe
+  shorthand for relations/evidence — the same distinction the main
+  project already draws between a term's strict name and its fuller
+  definition text, correctly recognized as the same pattern in a new
+  context.
+- Separately, unprompted and correct: identified that SQLite's
+  `terms.source_id` (first-source-encountered) is vestigial now that
+  `evidence` handles proper multi-source attestation, and flagged it
+  explicitly as a column that will NOT be carried into the eventual full
+  migration — a real "looks easy to migrate, actually semantically wrong
+  to" catch, logged in `TIMELINE_ITEM_DESIGN.md` for when that migration
+  actually happens.
+
+**Pillar 7 (engineering rigor) — real, direct DB-workflow questions,
+answered rather than glossed over.** Asked, correctly sensing a gap in his
+own mental model, whether editing and rerunning a `CREATE TABLE IF NOT
+EXISTS` script actually applies a column change to an existing table (it
+doesn't — silently no-ops), which surfaced the drop-and-recreate-vs-
+`ALTER TABLE`-vs-migration-tooling distinction, and separately asked how
+`psql` targets a specific database (`-d`, `\c`, `\conninfo`) rather than
+guessing. Both genuine "how does this actually work" questions asked
+before acting, not after breaking something.
+
+**Pillar 4 — first hands-on SQLAlchemy reps, real self-written bugs,
+still early.** Wrote the `Term`/`Source` models himself off one worked
+example (`SubSystem`) and the `Mapped[...]`/`mapped_column()` shape
+explained once. Two real bugs in the first pass, both his: importing
+`Enum` from `sqlalchemy.orm` instead of top-level `sqlalchemy`, and
+`primary_key=true` (lowercase, a Python `NameError`) instead of `True` —
+both caught in review, not yet self-caught before running the code (this
+tool is new to him; expect that to shift with more reps, same arc as the
+JS/TS sessions). Correctly reasoned through the follow-on nullability/
+uniqueness question once it was raised (`terms.name` should be
+`NOT NULL` but not `UNIQUE`, given the project has genuine name
+homonyms) and updated the live DDL to match rather than leaving the model
+and the table disagreeing.
+
+**Honest caveats.** The `database.py` engine/session boilerplate was
+Claude's (pure setup, not a rep). The dry-run-against-a-throwaway-database
+verification technique that caught a real table-ordering bug
+(`timeline_items` referencing `evidence` before `evidence` was defined)
+was Claude's move, not Greg's catch — worth watching whether he adopts
+that verification habit himself in a future session, since it's exactly
+the kind of "don't trust a read-through" discipline pillar 9 rewards.
+
+**Roadmap status**: Phase 1 is now genuinely underway — schema designed
+and live in `theutus_scratch`, SQLAlchemy models started. Next: finish
+`Source` and the remaining tables' models, then FastAPI routes.
+
+---
+
+### 2026-08-29 (session 18) — Python refresh closes out Phase 0 entirely: uv project mechanics, a real mypy-driven design catch, and packaging end-to-end
+
+Same-day continuation after session 17 closed the JS/TS box, moving into
+the last open Phase 0 item: Python refresh (venvs, type hints, f-strings,
+packaging). Same hints-only, task-as-a-shape coaching model — Greg ran and
+wrote every command/file himself in a new `FDE_Skills_dev` uv project, with
+direct answers only for genuine "how do I" syntax questions (`httpx.get`
+vs. `.request`, `uv build`/`uv tool install` mechanics).
+
+**Environment setup: a real, recurring infra gotcha, diagnosed twice.**
+`uv` wasn't installed; the official installer ran fine but its binary
+landed in `/home/gregism/snap/code/258/.local/bin`, not the real
+`~/.local/bin` — VSCode's snap confinement remaps `$HOME` for its own
+integrated terminal, so the install was invisible everywhere else,
+including this tool's shell. Root-caused via `~/.config/uv/uv-receipt.json`
+(its `install_prefix` field named the sandboxed path directly), fixed with
+a symlink from the real `~/.local/bin/uv` into the sandboxed binary rather
+than moving it (moving would've broken `uv` inside VSCode's own terminal,
+since that terminal's `$HOME` would still look for it at the old path).
+Same exact issue recurred later with `uv tool install`'s shim for the
+built `fde-skills-dev` CLI — Greg hit it live (`python3 fde_skills_dev`
+misfired two ways: wrong invocation shape *and* wrong terminal), diagnosed
+collaboratively, same symlink fix applied on request. Both diagnoses were
+Claude's, not independent catches — logged honestly as infra debugging,
+not a pillar-9 rep.
+
+**Real, correct unprompted reasoning on uv project mechanics**, same
+transfer-learning shape as the JS/TS sessions' npm comparisons:
+`pyproject.toml` ↔ `package.json` (his own analogy, unprompted), and
+correctly reasoned out *why* `uv.lock` — not `.venv/` or `__pycache__` —
+is the file that belongs in git ("could generate the rest locally"),
+before being told, by the same logic as `package-lock.json`.
+
+**Real design/hygiene judgment, unprompted.** Moved the old JS/TS/SQL
+exercise files (`agg_join.sql`, `scope.js`, `term.js`, `term.ts`) into a
+new `exercise-scripts/` folder and gitignored it himself — keep-locally,
+don't-track, a genuine "what actually belongs in version control" call
+applied to prior sessions' own artifacts, not just this session's new
+files. Flagged one real, non-obvious git nuance in response: because the
+new folder is gitignored, `git status` shows those files as **deleted**,
+not renamed — git can't detect a move into ignored territory, so
+committing this removes them from tracked history going forward (working
+copies stay on disk). Confirmed as the actual intent, not an accident.
+
+**`httpx` + f-strings, a clean rep.** `uv add httpx` for a real
+one-dependency addition; a genuine "how do I" gap answered directly
+(reached for `httpx.request('GET', url)` before `httpx.get(url)` was
+pointed out as the idiomatic shortcut), then completed a real f-string
+with an embedded dict-index expression (`f"{data['login']} is located at
+{data['html_url']}"`) unprompted once the raw `.json()` dict was in hand.
+
+**Type hints, mypy-driven — same "react to the compiler" pattern as the
+TypeScript sessions, ported to Python.** `uv add --dev mypy` (a real first
+look at dev-dependencies as a distinct `pyproject.toml` section). First
+real find/fix cycle: `get_github_user` was annotated `-> dict` but never
+returned anything (just printed) — self-fixed after running `mypy` and
+reading its own output, not told the bug directly. Second: correctly
+supplied `-> None` for `main()` and, after finding `Any` undefined on his
+own first attempt, located and added the `from typing import Any` import
+himself to land `dict[str, Any]` as a more precise return type than bare
+`dict`.
+
+**The sharpest catch of the session: mypy passed clean, but a real bug
+was still there — a `paren_triage.py`/psql-pager-shaped instance, new
+domain.** Prompted to check whether a clean mypy run had actually verified
+everything: `--username` had `default=None` in argparse, but
+`get_github_user` was typed `username: str`, a real mismatch mypy never
+flagged (argparse's `Namespace` attributes type as `Any`, which silently
+defeats static checking — a genuine, non-obvious gap in what type-checking
+even covers). First fix widened the signature to `str | None` with a
+runtime guard, unprompted, then explicitly flagged his own uncertainty
+("not sure if I handled this gracefully") rather than assuming it was
+right. Pushed to reconsider whether `username` was genuinely optional at
+all — correctly reasoned to `required=True` on the argparse argument
+instead, then **on his own** simplified the function signature back down
+to plain `str`/`dict[str, Any]`, recognizing the `Optional` complexity was
+only ever there to paper over a validation gap that belonged one layer up
+(the CLI boundary), not scattered downstream. Same shape as the JS
+`Promise.all`/resolve-not-reject arc from 2026-08-28: rejected his own
+first fix as unsatisfying, then landed the more idiomatic answer through
+his own reasoning once pointed at the right question. Verified concretely
+— running with no `--username` now gives a real, actionable argparse error
+instead of silently doing nothing.
+
+**Packaging, closed end-to-end.** Moved the real CLI logic out of the
+loose top-level `test_httpx.py` into the actual `src/fde_skills_dev/`
+package scaffold (`uv init`'s stub `main()`, untouched since the very
+first step of the session) so it would actually be part of what gets
+built — a real "why isn't my code in the package" gap identified and
+fixed himself. `uv build` → inspected the two artifact types in `dist/` →
+`uv tool install` → the `fde-skills-dev` console-script command (named via
+`[project.scripts]`) running as a real, standalone installed CLI,
+independent of the project venv, verified live against the GitHub API.
+Gitignoring `dist/` was applied without being asked — full transfer of the
+build-artifacts-don't-belong-in-git lesson from earlier in the session.
+
+**Roadmap status**: `LEARNING_ROADMAP.md`'s Python refresh box now fully
+checked off (venvs, type hints, f-strings, packaging) — **Phase 0 is
+complete in its entirety** as of this session. Next up: Phase 1 (full-stack
+rebuild), with an open, explicitly-flagged question about whether to
+commit to React/TypeScript or pilot alternatives (Svelte/SolidJS floated as
+worth trying specifically because they diverge from React's model, not
+just syntax) before settling on a stack for anything beyond this roadmap.
+
+---
+
 ### 2026-08-29 (session 17) — modules exercise finished, then TypeScript's type system closes out the whole JS/TS box
 
 Direct continuation of session 16, picking up the modules exercise

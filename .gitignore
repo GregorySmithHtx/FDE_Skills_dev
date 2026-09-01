@@ -1,2 +1,5 @@
 agg_join.sql
 node_modules/
+**/__pycache__
+.venv/
+/exercise-scripts
