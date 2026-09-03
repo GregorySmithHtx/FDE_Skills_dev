@@ -6,6 +6,79 @@ what felt easy/hard, and any updates to the pillar levels in
 
 ---
 
+### 2026-09-03 (session 24) — real architecture layering shipped and used, plus the first genuine React-mentoring miscalibration and correction
+
+Continuation of session 23's `theutus-db-timeline-phase` work, picking up
+from his own written dependency-chaining notes on what creating a
+`timeline_item` actually requires.
+
+**Pillar 6 — a real design arc, mostly his own reasoning, across several
+rounds of correction.** Landed on a clean `resolve_*`/`search_*`/`create_*`
+separation: search only searches (no hidden insert side effects), `resolve`
+is pure read (existing id or a legacy crosswalk, never a fuzzy match, never
+auto-creates), `create` is terminal. Two of his own corrections mid-design
+are the real evidence here, not the end state: he caught that a `None` from
+a legacy-id lookup isn't `resolve_term`'s problem to fix ("this is the job
+for the search"), generalizing a rule I'd only stated for one branch to the
+other symmetrically; and independently, when a `create_term_from_legacy`
+idea I proposed would have re-fetched data the caller already had in hand,
+he cut it: "I think it's doing too much." Also made a real scope call when
+the legacy category vocabulary turned out to be 130 distinct values, not
+the ~20 first assumed — chose a full-fidelity reference table (`term_types`)
+over either silently truncating scope or hand-mapping everything, then
+hand-vetted specific categories as `person`-aliases one at a time
+(`philosopher` yes, `literary_figure` no — correctly reasoning Amaryllis/
+Daphnis are quoted-poetry characters, not historical people) rather than
+accepting a blanket rule.
+
+**Pillar 4 — real reps, with two bugs he wrote himself and caught by
+running the code, not by reading it.** Wrote `migrate_terms`,
+`migrate_terms_by_category`, and `migrate_historical_person_terms` himself.
+First had a tuple-unpacking bug (assumed 3 fields, `search_legacy_terms`
+returns 4) caught by Claude running it against real data rather than
+review; fixed correctly. Second time, independently produced the *exact
+same bug class* from earlier in the session (a function that did real work
+but returned `None` instead of the result) on his own two new functions —
+caught the same way, by actually running them. Worth naming plainly: a bug
+class pointed out once earlier the same session recurred in new code
+minutes later — normal, not a regression in his learning, but a concrete
+data point that "explained once" isn't "internalized yet" for this
+specific pattern.
+
+**Pillar 4 — first real React exposure, and a genuine mentoring-calibration
+miss worth recording precisely.** Scaffolded Vite+React+TS himself
+(corrected Claude mid-task after briefly, mistakenly, letting Claude do the
+scaffold instead). Then asked for "a hint" on wiring a fetch in `App.tsx`;
+got a two-bullet `useState`/`useEffect` gloss assuming framework vocabulary
+he doesn't have yet — landed as "I literally have no idea what you are
+talking about." The over-correction (a complete, commented code block) was
+called out just as directly and precisely: "you are telling either nothing
+at all or doing all the work, which defeats the purpose... do you want me
+to go sift thru the docs or walk me through how react works." What actually
+worked, on the third attempt: walking through *why* React works the way it
+does (the render cycle, why state changes trigger re-renders, why side
+effects need a designated escape hatch instead of running inline) tied to
+his own Skuid model-binding/page-load-action background, then leaving the
+actual code-writing to him. This is a real, distinct failure mode from the
+established coding-challenge-mode pattern (hints on tasks in territory he
+already knows) — on a framework this new, a "hint" has to teach the
+underlying model first, sized to zero framework vocabulary, not assume it
+or skip straight to the answer. Logged to `user_greg.md` for future
+sessions on genuinely new tools.
+
+**Honest caveat.** A meaningful chunk of this session's actual code (the
+`term_types` migration, the CORS middleware, the Vite scaffold command
+itself before he took it back) was still Claude's hands, explicitly
+requested that way ("this is a fairly mechanical thing I want you to do for
+me") rather than a rep he asked to keep. Consistent with the existing
+mechanical-work-vs-new-to-him distinction in `user_greg.md`, not a
+regression of it.
+
+**Full technical detail**: `symbol_constellation/log/2026-09-03.md` and
+`theutus-db-timeline-phase/TIMELINE_ITEM_DESIGN.md`'s 2026-09-03 entries.
+
+---
+
 ### 2026-09-02 (session 23) — `timeline_item` schema simplified by his own catch, first hands-on Alembic rep, and a real architecture direction from his own Skuid background
 
 Short session, same-day continuation of session 22's `theutus-db-timeline-phase` work — picked up exactly where it left off (`timeline_items` routes not started).

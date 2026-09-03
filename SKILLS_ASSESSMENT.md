@@ -61,7 +61,13 @@ work regardless of stack.
   (React is the default choice for FDE-style rapid UI work). **In progress
   2026-08-28**: `let`/`const`/closures, destructuring, and promises/async-await
   covered with real self-directed reps (see pillar 4 and `PROGRESS_LOG.md`
-  2026-08-28); modules and TypeScript's type system still open.
+  2026-08-28); modules and TypeScript's type system still open. **First real
+  React exposure 2026-09-03**: Vite scaffold run himself, first attempt at a
+  `useState`/`useEffect` data-fetch component underway — see
+  `PROGRESS_LOG.md` session 24 for a real mentoring-calibration finding on
+  this specific gap (neither a jargon hint nor a full code drop works on a
+  framework this new; walking through the render-cycle model itself, tied
+  to his own Skuid background, is what actually landed).
 - ~~Python, current tooling basics.~~ **Closed out 2026-08-29** — real `uv`
   project mechanics (venvs, dependency management, dev-dependencies,
   packaging/`uv build`/`uv tool install`), type hints verified with `mypy`
