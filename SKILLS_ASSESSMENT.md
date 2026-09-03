@@ -67,7 +67,13 @@ work regardless of stack.
   `PROGRESS_LOG.md` session 24 for a real mentoring-calibration finding on
   this specific gap (neither a jargon hint nor a full code drop works on a
   framework this new; walking through the render-cycle model itself, tied
-  to his own Skuid background, is what actually landed).
+  to his own Skuid background, is what actually landed). **Same day,
+  further along**: first real working screen shipped — TanStack Table v9 +
+  Tailwind v4/shadcn rendering a paginated, categorized, themed data grid
+  against the live FastAPI backend. Real self-driven bug fixes (duplicate
+  JSX, missing component usage, a regex simplification) alongside a second
+  confirmed terseness-calibration correction — see `PROGRESS_LOG.md`
+  session 24.
 - ~~Python, current tooling basics.~~ **Closed out 2026-08-29** — real `uv`
   project mechanics (venvs, dependency management, dev-dependencies,
   packaging/`uv build`/`uv tool install`), type hints verified with `mypy`

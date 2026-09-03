@@ -74,6 +74,33 @@ me") rather than a rep he asked to keep. Consistent with the existing
 mechanical-work-vs-new-to-him distinction in `user_greg.md`, not a
 regression of it.
 
+**Same-day continuation — a real first working screen, plus a second
+communication-calibration correction.** Built out a first real UI:
+TanStack Table v9 rendering `GET /terms` as a paginated, categorized grid,
+styled with Tailwind v4 + shadcn/ui, themed to match `symbol_constellation`'s
+own report UI. Real reps of his own: wrote the `useTable`/`tableFeatures`
+wiring, fixed his own duplicate-JSX and missing-`TableHead` bugs across
+several rounds (the duplicate took multiple flags before it actually got
+removed — worth naming as a real, normal part of the learning curve, not
+just a clean success story), combined two regex-based `.replace()` calls
+into one via alternation, and reorganized a display helper into
+`src/lib/textUtils.ts` on his own initiative once shown where shared
+utilities belong in this project shape.
+
+**Pillar 9-adjacent instance, Claude's own practice, not Greg's rep this
+time**: mid-session, corrected a stale assumption about TanStack Table's
+API (confidently described v8's `useReactTable`, the library was actually
+on v9 with a materially different API) by checking the installed
+package's own shipped docs rather than trusting training-data memory.
+Worth naming since it's the same discipline this roadmap wants Greg to
+build toward with AI-assisted work generally — verify against the real,
+current artifact, not what you remember being true.
+
+**Second real terseness correction, mid-debug**: "This response is too
+verbose and hard to scan," during a CSS/layout debugging loop. Same rule
+as the 2026-08-21 SQL-refresher finding, now confirmed to generalize
+across domains, not just Python/SQL — logged to `user_greg.md`.
+
 **Full technical detail**: `symbol_constellation/log/2026-09-03.md` and
 `theutus-db-timeline-phase/TIMELINE_ITEM_DESIGN.md`'s 2026-09-03 entries.
 
