@@ -101,6 +101,55 @@ verbose and hard to scan," during a CSS/layout debugging loop. Same rule
 as the 2026-08-21 SQL-refresher finding, now confirmed to generalize
 across domains, not just Python/SQL — logged to `user_greg.md`.
 
+**Same-day continuation — schema decision grounded in real external research,
+React Router (clean first pass), a harder React pattern that genuinely
+didn't land, and a real in-the-moment scope correction on Claude's own
+work.**
+
+- **Applied real research to a live design ambiguity, rather than
+  reasoning from memory.** A disputed-date schema question (does
+  disagreement between sources get a range, or separate rows?) got
+  resolved by fetching Wikidata's actual `Help:Dates` model and a live
+  example, not guessing — and the finding sharpened the design: Wikidata
+  itself treats *imprecision* (one source, a range/circa qualifier) as
+  structurally different from *disagreement* (two sources, two separate
+  statements), a distinction his own draft examples had blurred. This
+  part — the research itself and the three-candidate comparison it
+  produced — was mostly Claude's legwork; his own contribution was the
+  actual judgment calls once it came back: which candidate's rendering
+  honestly represented the data, and the right-sized simplification
+  ("nothing is lost either way... we can branch if we want to, based on
+  how we want the feature to work") — reserving the more complex
+  sibling-term shape as an unbuilt escape hatch rather than building it
+  preemptively. Same instinct as pillar 6's other entries, applied to a
+  new problem shape (temporal-uncertainty modeling).
+- **First React Router exposure — landed cleanly on the first pass**,
+  unlike the pattern below. `BrowserRouter`/`Routes`/`Route` wired
+  correctly after one walkthrough of the URL-to-component mapping
+  concept.
+- **A harder React pattern — wrapping an imperative library (`vis-timeline`)
+  through two effects coordinated by a shared `useRef` — is a real,
+  honestly-hit ceiling, not a regression.** The narrative-first approach
+  that worked for basic `useState`/`useEffect` earlier the same session,
+  and again for Router just above, did not fully land here even after a
+  second explanation. Two self-attempts in between each landed some real
+  fixes and introduced new bugs (an `end` field defaulting to a value
+  instead of being omitted, items passed to the wrong constructor
+  argument, a ref declared but never assigned) — then a direct "I don't
+  really follow... dumb it down," then "Too many words." Showing the
+  actual corrected code once, at that point, was the right call — he
+  confirmed an accurate self-assessment ("I won't be able to do this
+  from scratch in the future for a while and can use this as a
+  reference") rather than either frustration or false confidence. Worth
+  recording as a real, specific instance of pillar 9's flip side: honest
+  self-calibration about a current limit, not just catching AI output.
+- **A real, immediate scope correction on Claude's own work.** Claude
+  wired the new `Timeline` component into the existing, unrelated
+  terms-grid page for quick verification, without asking; caught
+  instantly: "It's not in App, it shouldn't be." Small, but a clean,
+  dated instance of pillar 9's core shape (catching AI overreach on
+  scope, not just bugs) landing in real time rather than on review.
+
 **Full technical detail**: `symbol_constellation/log/2026-09-03.md` and
 `theutus-db-timeline-phase/TIMELINE_ITEM_DESIGN.md`'s 2026-09-03 entries.
 
