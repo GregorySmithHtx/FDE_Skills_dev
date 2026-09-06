@@ -6,6 +6,77 @@ what felt easy/hard, and any updates to the pillar levels in
 
 ---
 
+### 2026-09-06 (session 25) — Wikidata date-import feature: a repeated bug-class caught the harder way, a first real third-party API integration, and a clean architecture-scope call
+
+Continuation of `theutus-db-timeline-phase`'s Wikidata/FactGrid date-import
+work (design conversation logged in `symbol_constellation`'s own memory
+system, since those decisions are project-specific).
+
+**Pillar 4 — a repeated bug-class instance, caught the harder way this
+time.** Wrote `search_person_terms_by_name` himself; when told the fix
+needed two separate checks (a nonexistent `Term.term_type` field, and
+Python's `and` not composing two SQLAlchemy column expressions), pushed
+back on the second ("It's also checking if term_type is person") rather
+than accepting it, then found the real behavior himself by running the
+query against real data and reading the SQL it actually produced — the
+filter really was silently dropping the name condition. Same "non-obvious
+falsy result, not an error" bug shape logged for several past sessions, but
+this time via genuine skepticism-then-verification of Claude's explanation
+rather than accepting it outright.
+
+**Pillar 4 — a first real third-party API integration, hands-on.** After a
+walkthrough of Wikidata's actual Wikibase API shape (`wbsearchentities`/
+`wbgetentities`, claim/reference/precision structure — new territory, not a
+framework), wrote `request_person_data`/`request_entity_claim`/
+`extract_claims_by_property` in `wikidata_client.py` himself. Independently
+proposed disambiguation logic for competing claims, then recognized on his
+own that this could conflict with the project's stated preserve-all-claims
+design principle once Claude raised it — a real design-judgment moment, not
+just working code. Separately asked a good clarifying question about a real
+API-etiquette detail (Wikimedia's `User-Agent` policy contact-info format)
+rather than treating a security-adjacent header as boilerplate.
+
+**Pillar 4 — React, continued: a genuine conceptual miss (ref vs. state),
+corrected once explained, plus continued JSX-syntax self-debugging.** Used
+`useRef` for a value (`focusTerm`) that needed to actually re-render the UI
+when it changed — a real, not superficial, misunderstanding of React's core
+model (a ref never triggers a redraw; a state setter is what tells React
+"something changed, redraw"), corrected once the rule was named directly.
+Also hit and fixed, with location-only hints rather than full answers,
+several real JSX syntax errors across two rounds (`<div` missing its
+closing `>`, an unbalanced stray `}`, a broken `.map()`/`if`-in-JSX
+attempt) — a normal, continuing part of this framework's learning curve,
+not a regression. **Deliberately, correctly chose an uncontrolled input
+(`useRef` + read-on-click) over the controlled-input pattern taught
+earlier**, confirmed intentional rather than habit once asked — a real,
+if small, judgment call about which pattern fits a search-on-click
+interaction versus live-as-you-type.
+
+**Pillar 6 — a clean, unprompted architecture-scope call.** Building the
+term-select step surfaced that ~14% of migrated person terms share a name
+with at least one sibling (66 groups, 144 of 1,036 terms at the time).
+Rather than pull base-term/dedup logic into the timeline-item feature to
+handle it, correctly scoped it out: "this timeline item feature is not the
+best place for the base creation feature, but it will surface them" —
+recognizing a feature that *surfaces* a data-quality problem doesn't have
+to be the feature that *solves* it. Also correctly identified that
+Synthesist (the existing `symbol_constellation` agent built for exactly
+this kind of base-term consolidation) isn't usable as-is, since it's built
+entirely around a different project's SQLite schema.
+
+**Third confirmed terseness-calibration correction, same pattern as prior
+sessions**: "Too verbose, can't scan," landing immediately and applied for
+the rest of the session without recurrence. Not a new finding — logged so
+it isn't re-discovered as one next time.
+
+**Honest caveat.** The bulk of this session's actual new backend code (a
+term_relations/relation_types/evidence migration pipeline, ~230 lines) was
+explicitly delegated as "mostly repetitive" — Claude's hands, not a rep he
+asked to keep, consistent with the established mechanical-delegation
+pattern. One of the two new Wikidata FastAPI routes also shipped with a
+duplicate-function-name bug caught by Claude reading the code, not
+something he self-caught.
+
 ### 2026-09-03 (session 24) — real architecture layering shipped and used, plus the first genuine React-mentoring miscalibration and correction
 
 Continuation of session 23's `theutus-db-timeline-phase` work, picking up
