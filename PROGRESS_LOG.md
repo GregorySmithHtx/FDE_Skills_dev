@@ -6,6 +6,63 @@ what felt easy/hard, and any updates to the pillar levels in
 
 ---
 
+### 2026-09-06 (session 26) — same-day continuation, honest calibration: zero hands-on coding, but real direction/judgment on a Claude-built feature
+
+Continuation of session 25's Wikidata date-import work, in a different
+Claude Code conversation. Worth logging precisely because it's a different
+shape of session than most of this log: Greg wrote no code himself here —
+every implementation decision was explicitly delegated ("you build it") —
+so the evidence is about directing/evaluating built work, not producing it.
+
+**Pillar 9 — a second real instance of catching AI over-delegation in the
+moment, not after the fact.** Asked which specific piece of a multi-part
+task to tackle next (a scoping question); Claude answered the scoping
+question and then also silently built the whole thing. Correction was
+direct and precise: "I appreciate it, but in general, I can't learn much
+when you do all of the work for me... I'll review the code and see if
+there is a new idea that I'd like to be taught" — naming the actual
+distinction (which task ≠ who codes it) rather than just objecting to the
+outcome. Same pattern as earlier sessions' pillar-9 catches, but the
+framing is sharper each time it recurs.
+
+**Pillar 6 — two real data/schema design calls, made from a stated
+tradeoff rather than accepted by default.** (1) Given a choice between
+matching "already imported" by a lossy `item_type` bucket vs. an exact
+`property_id + statement GUID` pair (more precise, costs a schema
+migration + threading a new field through the API), chose the precise
+option and drove the rename ("wikidata_reference") himself. (2) Earlier,
+given a real `__init__.py` sprawl problem with two candidate fixes
+(collapse repeated CRUD boilerplate into one helper, vs. split into
+FastAPI routers), explicitly deferred the bigger structural change and
+took the smaller, immediately-payoff fix — a real scope/priority call, not
+just picking the first suggestion.
+
+**Pillar 4/9 — a directionally-correct technical hypothesis on unfamiliar
+ground.** Proposed "use negative 340" for a BCE date that wasn't rendering
+on a timeline widget. The exact literal form was wrong (a bare negative
+year misparses as positive in JS's `Date`/moment — needed ISO's extended
+6-digit signed-year format instead), but the underlying instinct — BCE
+needs to be represented as a negative value for a date library to plot it
+correctly — was exactly right, formed without deep JS `Date`-internals
+knowledge.
+
+**Pillar 9 — drove a debugging session efficiently by insisting on real
+evidence over redundant re-verification.** When a page crash appeared
+(`Invalid start "NaN"` from vis-timeline's `.fit()`), pasted the actual
+stack trace rather than describing the symptom, then interrupted a
+duplicate automated browser check with a one-word "Look" and a screenshot
+— correctly recognizing that running a second competing test against the
+same live session was wasted motion when he already had the ground truth
+in front of him.
+
+**Calibration note for `SKILLS_ASSESSMENT.md`:** this session doesn't move
+pillar 4 (no hands-on code), but it's real evidence for pillar 6 (data
+modeling/scope judgment) and pillar 9 (AI-collaboration judgment) at a
+more senior register than earlier instances — less "caught a bug," more
+"changed the shape of the work based on a stated tradeoff."
+
+---
+
 ### 2026-09-06 (session 25) — Wikidata date-import feature: a repeated bug-class caught the harder way, a first real third-party API integration, and a clean architecture-scope call
 
 Continuation of `theutus-db-timeline-phase`'s Wikidata/FactGrid date-import
