@@ -6,6 +6,62 @@ what felt easy/hard, and any updates to the pillar levels in
 
 ---
 
+### 2026-09-06 → 09-10 (session 27) — first hands-on full-stack feature in theutus (route + ORM join + React page), plus data-modeling calls that overrode AI-written rationale
+
+Spans the post-close continuation of 2026-09-06 through 2026-09-10 in
+`theutus-db-timeline-phase`. Unlike session 26, this one has real
+hands-on code from Greg, alongside several judgment calls on work Claude
+executed.
+
+**Pillar 4 — the Person detail page, built by Greg with hints, not
+handed code.** A string of real, self-fixed bugs, each a genuine
+concept: reading a path segment with `URLSearchParams` instead of
+`useParams`; a `fetch` in the render body re-firing on its own
+`setState` (the concrete reason `useEffect` exists); a 404 from a route
+that didn't exist yet; Flask-style `<int:term_id>` path syntax in a
+FastAPI decorator. Then a first real ORM join: after a short
+SQL-to-ORM walkthrough he wrote the `aliased(Term)` double join himself,
+hit the `Row`-isn't-JSON-serializable bug, and fixed it once explained.
+Also grouped repeated relation types into one sentence
+(`Intl.ListFormat`), prev/next person navigation, and reused the
+timeline component. When a type check (the build's `tsc`) surfaced
+errors — including a wrong type name and a vis-timeline import whose
+types don't export `DataSet` — he fixed them himself once the explanation
+switched from build-tool jargon to a mypy analogy.
+
+**Pillar 6 — design calls that changed the plan.** Spotted the N+1 shape
+in his own first plan (fetch relations, then each other-side term)
+before building it, and asked for a single-query route instead.
+Simplified relation display to a canonical "A type B" on both ends
+rather than inverse-type or passive-label machinery — right-sized for
+"I need to see the data first." Diagnosed the root cause of a
+66-group person-duplicate problem as a schema decision, not a data
+problem: SQLite's `terms.source_id` (one source per term) forced a new
+term row per book mentioning a person; source belongs on evidence. Ruled
+that typed Deck/Card side-tables don't gate migrating plain terms. And
+recognized birth/death lookup as mechanical batch work, repositioning
+the review UI toward adding other events from new evidence.
+
+**Pillar 9 — rejecting AI-authored rationale embedded in the data.**
+Mid-dedup, Claude halted a merge batch because relation notes (written by
+an earlier agent pass) asserted a "per-source person convention."
+Greg: "Claims in notes are likely cheats to avoid telling me what is going
+on" — he'd never set it, and his actual policy was the opposite. Also cut
+off a multi-round AI investigation with "You can just ask," caught a
+merge group Claude had silently dropped (Eliphas Levi), and flagged
+"Madame Blavatsky" as a bad term sourced from a publisher's ad. Honest
+context: Claude made several real errors this stretch (a collision-checker
+bug that let unchecked merges through until a live FK error, two dropped
+groups, and false "type-checks clean" reports) — the catches landed on
+genuine mistakes, not hypotheticals.
+
+**Calibration note for `SKILLS_ASSESSMENT.md`:** real pillar-4 movement —
+the first feature in this project where the route, the ORM query, and
+the React page are Greg's own code. Pillars 6 and 9 continue at the
+senior register noted in session 26.
+
+---
+
 ### 2026-09-06 (session 26) — same-day continuation, honest calibration: zero hands-on coding, but real direction/judgment on a Claude-built feature
 
 Continuation of session 25's Wikidata date-import work, in a different
