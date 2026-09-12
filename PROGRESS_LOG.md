@@ -6,6 +6,100 @@ what felt easy/hard, and any updates to the pillar levels in
 
 ---
 
+### 2026-09-11 (session 28) — source-rights diligence on a "Public Domain" label that was wrong, and a scope call that separated skill goal from content interest
+
+A short, non-coding session, but two things worth logging: a data-provenance
+catch and a prioritization call that reframes the whole theutus side quest.
+
+**Pillar 3 / 9 — refusing an authoritative-looking metadata label.** Greg
+brought an archive.org item for Regardie's *The Complete Golden Dawn System
+of Magic* tagged "Public Domain Mark 1.0" and asked, unprompted, whether
+that was trustworthy rather than ingesting it. It was not: the item sits in
+`Community Texts`, where the rights field is a dropdown the *uploader*
+picks and nobody verifies, and the underlying book is a 1984 Falcon Press
+title still in print. He had **already** quarantined that exact file into
+`/mnt/data/Books/Non PD/` before asking — the instinct preceded the
+confirmation. He then supplied the Stanford renewal record himself, which
+moved the investigation forward rather than waiting on it.
+
+**The substantive result** (Claude's execution, Greg's direction): the
+1937-1940 Aries Press four-volume set was checked against primary Catalog
+of Copyright Entries scans. Vol I was renewed (R341660, 23 Jul 1964) and
+runs to 2033; Vols II-IV were registered but never renewed and are public
+domain. ~223k words of usable primary material, including Book "T" — the
+Golden Dawn Tarot source document — which turned out to be in Vol 4, not
+the copyrighted Vol 1 as assumed. Method and result saved to project
+memory so it isn't re-derived.
+
+**Worth noting as method, not just outcome:** the search was OCR-based and
+therefore a *negative* result needed a positive control before it meant
+anything — the same grep had to find the one renewal known to exist before
+"no hits 1965-68" could be trusted. Greg didn't design that check, but it's
+the shape of verification discipline pillar 9 is tracking, and it's worth
+having the concrete example.
+
+**Pillar 2 / scope judgment — separating the skill goal from the content
+interest.** Greg raised a real allocation problem: a 96-file source backlog
+on `/mnt/data/Books` versus an unfinished theutus timeline project he
+described as "moderately interesting, but not a key part of the main
+project." The useful reframe, which he accepted: the FDE value of theutus
+was never the historical-figures *content* — it's the stack. Verified
+against the repo, theutus already has React+TypeScript, FastAPI, and a
+self-designed Postgres schema with Alembic, i.e. 3 of Phase 1's 5 items
+and 3 of Phase 2's 4. What remains in Phase 1 is **auth by hand** and
+**deploy somewhere real** — neither of which needs another row of
+historical data. So "wrap up the side quest" resolves to finishing the
+engineering, not the content.
+
+**Honest caveat.** No code written by Greg this session. This is direction,
+provenance judgment, and scope calling — real, but not pillar-4 evidence.
+
+**Calibration note for `SKILLS_ASSESSMENT.md`:** updated same day. Fixed a
+broken pillar-4 table row (missing closing pipe), refreshed the stale
+"Last updated" header, and — the real one — flagged that **pillar 5's
+justification for sitting at "Partial" is now contradicted by pillar 4's
+own session-25 evidence**: it still reads "not hands-on ETL code-writing by
+him," but session 25 has him hand-writing a Wikibase API client and
+sessions 25-27 shipped a full ETL pipeline. Level change proposed, not
+applied unilaterally.
+
+**Mentoring calibration — a repeat miss, corrected mid-session.** The first
+half of the Docker work was run hints-first: "the Dockerfile needs to do X,
+Y, Z" rather than showing syntax. Across four rounds that produced four
+reasonable-but-wrong guesses — `pip install -r uv.lock` (right, if you
+assume a lockfile is a requirements file), the `.dockerignore` contents and
+the `docker build` command pasted *into* the Dockerfile as if they were
+instructions, and `useradd appuser /app` (a dropped flag with its value
+kept). Greg ended it directly: *"you aren't helping me understand the syntax
+with these little chunks... I know that I'm supposed to hand type this and
+that makes you want to hold back, but I don't know anything about it at all
+so it's silly."* After `compose.yaml` was written out annotated: *"I was
+nowhere close to that with those hints."*
+
+The governing distinction is the one already in this log from 2026-09-01,
+applied to *teaching* rather than *write-ups*: hints work when a prior rep
+exists to pattern-match against (`paren_triage.py`, the Person page); they
+fail outright when the **syntax itself** is new, because there is nothing to
+recognize and nothing to modify. Config/markup languages he has never
+touched — Dockerfile, YAML, Compose, and Caddyfile/GitHub Actions still
+ahead — default to written-out-and-annotated. **This is the second time this
+ceiling has been hit** (first: 2026-09-03, vis-timeline hooks). Mode switched
+for the remainder of the deploy work; memory updated so it doesn't need
+rediscovering.
+
+**Worth separating from the above:** the wrong guesses were syntax-ignorance,
+not comprehension failures — and unprompted, without being asked, he added a
+**non-root `USER`** to the image, which is a real least-privilege practice
+most first Dockerfiles skip. That's the diagnostic signal, not the `useradd`
+flag error.
+
+**Next step, concrete:** auth + deploy on theutus closes Phase 1, and
+containerizing for deploy drags half of Phase 3 (pillar 7, still "Weak /
+unknown" and the weakest pillar on the board) in with it. That is the
+highest-leverage work available right now.
+
+---
+
 ### 2026-09-06 → 09-10 (session 27) — first hands-on full-stack feature in theutus (route + ORM join + React page), plus data-modeling calls that overrode AI-written rationale
 
 Spans the post-close continuation of 2026-09-06 through 2026-09-10 in
