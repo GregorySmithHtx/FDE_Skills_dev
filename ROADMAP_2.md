@@ -242,8 +242,13 @@ one model and two migrations, and that the rest was pillar 2.
   guardrails on a runaway loop. Local models cover every item here. Revisit
   only if something genuinely cannot be done locally — and say what, rather
   than drifting back to it.
-- **Not 2am.** Four weeks in, the pace has been ~20 working days out of 28
-  with sessions ending past 2am. That pace produced roadmap 1 ahead of
-  schedule and is not the constraint worth optimising next. Skill sessions
-  in particular are the wrong work to do tired — they are the ones where
-  you're supposed to be slow and thinking.
+- **No pacing rules.** An earlier draft of this file told Greg not to work
+  late. Corrected 2026-09-13 — **weekend sessions running to 2am are
+  deliberate: that is his time, and this is what he wants to spend it on.**
+  Not a sustainability problem to manage, and not something to nudge about
+  again.
+
+  The only residue worth keeping is as *data*, not a rule: note the hour in
+  `PROGRESS_LOG.md` when a session ran long. If a skill rep goes badly it is
+  useful to know whether tiredness was a factor before concluding something
+  about the skill — that is calibration, not a curfew.
