@@ -39,6 +39,10 @@ Goal: work with data that isn't already shaped like a Salesforce object.
 - [x] Design a schema/data model for a domain from scratch, with no
       platform imposing structure on you
 - [ ] Integrate with at least one external API with real auth (OAuth2)
+      — **carried forward to `ROADMAP_2.md` (2026-09-13).** Deliberately not
+      forced: theutus integrates Wikidata/FactGrid, but those need no auth at
+      all, and inventing an OAuth2 requirement to tick a box would teach
+      nothing. Do it when a real integration wants it.
 
 ## Phase 3 — Engineering rigor (2–3 weeks)
 
@@ -54,6 +58,12 @@ in production.
 
 ## Phase 4 — AI/LLM application basics (2–3 weeks, optional but recommended)
 
+**Superseded 2026-09-13 — folded into `ROADMAP_2.md`.** Not skipped: doing
+these as standalone exercises would be strictly worse than doing them in
+`symbol_constellation`, which already *is* an LLM application (extraction
+pipeline, prompt authorship, agent definitions) and has a 96-source document
+backlog on `/mnt/data/Books` waiting to be a real RAG target.
+
 Goal: fluency with the tooling increasingly expected of FDE-adjacent roles
 in 2026.
 
@@ -63,6 +73,12 @@ in 2026.
 
 ## Phase 5 — FDE simulation capstone (ongoing)
 
+**Superseded 2026-09-13 — folded into `ROADMAP_2.md`.** `symbol_constellation`
+is already a capstone-shaped project (messy real-world sources, a domain no
+platform structures for you, a real user). What it lacks is the time box and
+the out-loud architecture defence — both carried forward rather than
+restarted as fiction.
+
 Goal: practice the actual job, not just the skills.
 
 - [ ] Pick a fictional "client" scenario with a messy, real-world problem
@@ -71,6 +87,22 @@ Goal: practice the actual job, not just the skills.
 - [ ] Practice explaining your architecture and tradeoffs out loud, as if
       presenting to a client — this is the pillar you already have; use it
       to pressure-test the pillars you're building
+
+## Status — closed out 2026-09-13
+
+Phases 0 and 1 complete. Phase 2 is 3 of 4 (the OAuth2 item carried forward).
+Phase 3 is 1 of 4 — **tests, CI and input validation are the live closeout
+work**, to be done on theutus, which is finished and deployed and therefore
+an ideal test subject. Phases 4 and 5 fold into `ROADMAP_2.md`.
+
+Elapsed: 2026-08-16 to 2026-09-13, four weeks, against a 6–9 week estimate
+for Phases 0–1 alone.
+
+The honest lesson this roadmap taught, and the reason `ROADMAP_2.md` is
+shaped differently: **checking a box is not the same as moving a pillar.**
+Phase 1 finished with all five items ticked while pillar 4 stayed "weak /
+rusty," because the boxes measure whether the app has a feature, not who
+wrote it.
 
 ## How this stays current
 
