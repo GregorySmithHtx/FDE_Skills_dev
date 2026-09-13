@@ -22,21 +22,21 @@ Goal: get the rust off before building anything real.
 
 Goal: build one real full-stack app by hand, deployed.
 
-- [ ] React + TypeScript frontend
-- [ ] Python FastAPI backend (or Node/Express if you'd rather stay in one
+- [x] React + TypeScript frontend
+- [x] Python FastAPI backend (or Node/Express if you'd rather stay in one
       language) with a real REST API
-- [ ] Postgres for storage, with a schema you designed yourself
-- [ ] Basic auth (JWT or session-based) implemented by hand at least once
-- [ ] Deploy it somewhere real (Render/Fly.io/AWS) — not just running locally
+- [x] Postgres for storage, with a schema you designed yourself
+- [x] Basic auth (JWT or session-based) implemented by hand at least once
+- [x] Deploy it somewhere real (Render/Fly.io/AWS) — not just running locally
 
 ## Phase 2 — Data engineering & modeling (3–4 weeks)
 
 Goal: work with data that isn't already shaped like a Salesforce object.
 
-- [ ] Ingest a messy public dataset (CSV/JSON/API) with missing/inconsistent
+- [x] Ingest a messy public dataset (CSV/JSON/API) with missing/inconsistent
       fields
-- [ ] Build a small ETL/ELT pipeline: extract → clean/transform → load
-- [ ] Design a schema/data model for a domain from scratch, with no
+- [x] Build a small ETL/ELT pipeline: extract → clean/transform → load
+- [x] Design a schema/data model for a domain from scratch, with no
       platform imposing structure on you
 - [ ] Integrate with at least one external API with real auth (OAuth2)
 
@@ -48,7 +48,7 @@ in production.
 - [ ] Automated tests (unit + at least one integration test) for the Phase 1
       app
 - [ ] CI pipeline (GitHub Actions) that runs tests on every push
-- [ ] Docker: containerize the app
+- [x] Docker: containerize the app
 - [ ] Security basics: input validation, secrets management, least-privilege
       API design — applied to your own code, not a platform's settings panel
 
