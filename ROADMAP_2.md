@@ -134,18 +134,39 @@ Absorbs roadmap 1's Phase 4. You already author prompts and agent
 definitions on a working system; what's missing is the **orchestration
 code** underneath.
 
+**Local models only — decided 2026-09-13.** The metered API is out: too
+expensive, and a bug in an agent loop is unbounded spend with no natural
+stop. That objection is strongest precisely for the code this pillar asks
+you to write. Everything below runs on what this project already has —
+Ollama (`.ollama/`, `./start_ollama.sh`, `qwen2.5:7b-instruct`) and
+`sentence-transformers`/`all-MiniLM-L6-v2` in `local_pipeline_venv/`, on a
+12 GB RTX 3060.
+
+This is not a downgrade. The orchestration skill — tool definitions, the
+dispatch loop, retries, context management — is identical against any
+endpoint. And working against a 7B model forces a question the API lets you
+buy your way past: **is a weaker model good enough for this step?**
+`local_draft.py` already lives that tradeoff. Being able to answer it with
+evidence is more FDE-relevant than having called a frontier model.
+
 **What would make this Strong:**
 
 - [ ] **RAG over the 96-source backlog** on `/mnt/data/Books` (46 epubs, 45
       PDFs, mostly pre-1930 and therefore PD). Chunking, embeddings,
       retrieval, and an honest evaluation of whether retrieval actually
-      returns the right passage — the evaluation is the part that matters.
-- [ ] Direct Claude API work in code you wrote — not via Claude Code.
-- [ ] An agent loop you implemented: tool definitions, the dispatch loop,
-      error handling. The existing agents (Researcher, Synthesist,
-      Glossarist) are prompt-authored; this is the layer below them.
+      returns the right passage — the evaluation is the part that matters,
+      and the embedding stack is already installed.
+- [ ] An agent loop you implemented against Ollama: tool definitions, the
+      dispatch loop, error handling, and a hard iteration cap. The existing
+      agents (Researcher, Synthesist, Glossarist) are prompt-authored; this
+      is the layer below them.
+- [ ] **A documented capability boundary for `qwen2.5:7b`**: which pipeline
+      steps it handles acceptably and which it does not, with examples. You
+      have real data for this already — the "per this source" hedging that
+      2706 terms picked up from `local_draft.py` is exactly such a finding,
+      and it was diagnosed from output, not assumed.
 - [ ] A written comparison of where the agent pattern beat a plain script
-      and where it didn't. You already have real data for this.
+      and where it didn't.
 
 ---
 
@@ -217,6 +238,10 @@ one model and two migrations, and that the rest was pillar 2.
 - **No new side projects.** Two repos is already one more than ideal.
 - **Not every roadmap-1 item needs closing.** OAuth2 stays open until
   something real wants it.
+- **No metered LLM API.** Stated 2026-09-13: too expensive, and no
+  guardrails on a runaway loop. Local models cover every item here. Revisit
+  only if something genuinely cannot be done locally — and say what, rather
+  than drifting back to it.
 - **Not 2am.** Four weeks in, the pace has been ~20 working days out of 28
   with sessions ending past 2am. That pace produced roadmap 1 ahead of
   schedule and is not the constraint worth optimising next. Skill sessions
