@@ -6,6 +6,88 @@ what felt easy/hard, and any updates to the pillar levels in
 
 ---
 
+### 2026-09-13 (session 29) — Phase 1 closed: auth by hand, and a real deployment with a real domain
+
+Both remaining Phase 1 items shipped in one session. theutus is live at
+`https://theutus.grossestgroceries.com` — hand-rolled JWT auth, a
+containerized stack on a Hetzner VPS, Let's Encrypt TLS, nightly backups.
+
+**Pillar 4 — what he actually wrote.** Under the agreed split-by-newness
+deal: `auth_models.User`, the `users` migration, and the
+`DEFERRABLE INITIALLY DEFERRED` migration. Modest in volume, but the
+substance was right unprompted — `unique=True` on username as a real
+constraint, `is_active` rather than deleting rows, and he registered the new
+model module in `database.py` without being told twice. His one error was
+`=` where SQLAlchemy 2.0 needs `:` in the `Mapped[]` annotations; the
+concepts were fine, the syntax was new.
+
+**New ground: deployment and ops.** SSH key generation, key-only auth with
+root disabled, `ufw`, Docker, DNS delegation from GoDaddy to Cloudflare, an
+A record, ACME/TLS, a read-only deploy key. None of this existed in any
+prior session. Claude drove the commands; the decisions and the whole
+external side (registrar, Cloudflare, Hetzner, domain) were his.
+
+**Pillar 9 — two judgment calls that changed the outcome, both his.**
+
+*He refused the price.* Claude had quoted "~€4/mo" from memory and then
+accepted a $23/mo box when the console disagreed. Greg pushed back — "how
+much more building will I need to do to make the extra RAM worth while?" —
+which forced an actual measurement (the stack uses **174 MB** at rest; the
+4 GB was purely for a 90-second `npm ci`) and then the discovery that
+Hetzner's cheap CX line is **EU-only**, with the US CPX equivalent at ~6×.
+Final: **$6.49/mo instead of $37.49**, for 92 ms of latency. That is a
+~$370/year decision he made by not accepting a number.
+
+*He caught the blank page.* Post-deploy the app rendered empty. The only
+console symptom was a JSON syntax error. Root cause was the reverse-proxy
+classic: a stray trailing slash made FastAPI issue a 307 whose `Location`
+dropped the `/api` prefix, the SPA fallback returned `index.html`, and the
+client parsed HTML as JSON. Invisible in dev, where there is no prefix to
+lose.
+
+**The substantive engineering result — two schema bugs that only surface
+when data MOVES.** Restoring a `pg_dump` into a fresh Postgres (which no
+test exercised) found: a self-referential FK on `relation_types` where 76
+rows form mutual pairs, so no row ordering satisfies an immediately-checked
+constraint; and two trigger functions referencing `terms` unqualified with
+no `search_path`, which breaks under pg_dump's deliberate
+`set_config('search_path','')`. Both would have been *worse* on managed
+Postgres, where the `--disable-triggers` workaround needs superuser. Alembic
+autogenerate detects neither — both had to be hand-written. **This is the
+argument for the deploy exercise itself: deploying is not the last step of
+building, it is a test that finds what building cannot.**
+
+**Honest caveat.** Most of the code this session was Claude's —
+`security.py`, the router split, `cli.py`, the Caddy config, the compose
+overlay, the runbook. Greg's hands-on writing was the model plus two
+migrations. What was entirely his: every architecture decision (JWT vs
+session, APIRouter vs per-route, Caddy vs nginx vs certbot, VPS vs managed),
+the cost pushback, and the external provisioning. That is closer to pillar
+2 than pillar 4, and worth naming as such rather than counting the whole
+session as coding evidence.
+
+**Mentoring calibration — a new failure mode, distinct from the 09-11 one.**
+Claude opened the `cli.py` step with implementation detail
+(`getpass`/`IntegrityError`/rollback) for a file that did not exist yet, and
+he replied *"What are we talking about now? Script where, which one? This is
+cryptic."* The 09-11 lesson was about unfamiliar **syntax**; this one is
+about a missing **frame** — never having said what the artifact was or why
+it needed to exist. Fixed by backing up to the problem statement, then
+building it in labelled pieces at his request. Filed to memory; the standing
+rule is now two checks, not one: *does he know what this is for?* before
+*has he written this syntax before?*
+
+**Roadmap status.** Phase 1 is complete: React+TS, FastAPI, self-designed
+Postgres/Alembic schema, **auth by hand**, **deploy somewhere real**. The
+pillar-5 level question raised on 09-11 (its "not hands-on ETL code-writing
+by him" justification contradicted by session 25's hand-written Wikibase
+client) is **still open and still unapplied**. Untouched: **testing/CI** —
+GitHub Actions was considered as a way to avoid a $23 box, then dropped once
+the EU pricing made it unnecessary. It remains a genuine gap and should be
+done deliberately, not as a cost workaround.
+
+---
+
 ### 2026-09-11 (session 28) — source-rights diligence on a "Public Domain" label that was wrong, and a scope call that separated skill goal from content interest
 
 A short, non-coding session, but two things worth logging: a data-provenance
